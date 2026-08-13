@@ -1,0 +1,27 @@
+@model Inquilino
+
+<h2>Nuevo inquilino</h2>
+
+<form asp-action="Create" method="post">
+    <label>DNI</label>
+    <input asp-for="Dni" />
+    <br />
+
+    <label>Nombre completo</label>
+    <input asp-for="NombreCompleto" />
+    <br />
+
+    <label>Teléfono</label>
+    <input asp-for="Telefono" />
+    <br />
+
+    <label>Email</label>
+    <input asp-for="Email" />
+    <br />
+
+    <label>Dirección</label>
+    <input asp-for="Direccion" />
+    <br />
+
+    <button type="submit">Guardar</button>
+</form>
