@@ -7,10 +7,12 @@ public class Usuario
 
     [Required(ErrorMessage = "El email es obligatorio")]
     [EmailAddress(ErrorMessage = "Formato de email inválido")]
+    [Display(Name = "Correo Electronico")]
     public string Email { get; set;} = "";
 
     [Required(ErrorMessage = "El password es obligatorio")]
     [DataType(DataType.Password)]
+    [Display(Name = "Contraseña")]
     public string PasswordHash { get; set;} = "";
 
     [Required(ErrorMessage = "El nombre es obligatorio")]
