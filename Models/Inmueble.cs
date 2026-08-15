@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace inmobiliaria.Models;
+namespace inmobiliaria.Models
 {
   [Table("inmuebles")]
 public class Inmueble
@@ -20,9 +20,9 @@ public class Inmueble
 
   [Required(ErrorMessage = "La dirección es obligatoria")]
   [StringLength(250)]
-  public string Direccion { get; set; }
+  public string Direccion { get; set; } = string.Empty;
 
-  [Required(ErrorMessage = "El cupo es obligatorio")]
+    [Required(ErrorMessage = "El cupo es obligatorio")]
   [Range(1, int.MaxValue, ErrorMessage = "El cupo debe ser mayor a 0")]
   public int Cupo { get; set; }
 

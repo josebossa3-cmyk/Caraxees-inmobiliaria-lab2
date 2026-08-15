@@ -1,25 +1,25 @@
-@model Reserva 
+@model Reserva
 
-<h2> Nueva Reserva</h2> 
+<h2> Nueva Reserva</h2>
 
 <form asp-action="Create" method="post">
-<label>Inquilino</label>
-<select asp-for="InquilinoId" asp-items="@(new SelectionList(ViewBag.Inquilinos," Id" , "NombreCompleto"))" ></select>
-<br /> 
+  <label>Inquilino</label>
+  <select asp-for="InquilinoId" asp-items="@(new SelectList(ViewBag.Inquilinos, "Id", "NombreCompleto"))"></select>
+  <br />
 
-<label>Inmueble</label>
-<Select asp-for="InmuebleId" asp-items="@(new SelectionList(ViewBag.Inmuebles," Id" , "Direccion"))" ></Select>
- <br /> 
+  <label>Inmueble</label>
+  <Select asp-for="InmuebleId" asp-items="@(new SelectList(ViewBag.Inmuebles, "Id", "Direccion"))"></Select>
+  <br />
 
- <label>Monto por dia </label>
- <input asp-for="MontoPorDia" />
- <br /> 
- 
- <label> Fecha desde </label> 
- <input asp-for="FechaDesde" type="date" />
- <br /> 
- <label> Fecha hasta </label> 
- <input asp-for="FechaHasta" type="date" />
- <br /> 
- <button type="submit">Guardar</button>
- </form>
+  <label>Monto por dia </label>
+  <input asp-for="MontoPorDia" />
+  <br />
+
+  <label> Fecha desde </label>
+  <input asp-for="FechaDesde" type="date" />
+  <br />
+  <label> Fecha hasta </label>
+  <input asp-for="FechaHasta" type="date" />
+  <br />
+  <button type="submit">Guardar</button>
+</form>

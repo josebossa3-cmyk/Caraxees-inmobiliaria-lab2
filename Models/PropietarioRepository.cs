@@ -92,7 +92,7 @@ namespace inmobiliaria.Models
                           NombreCompleto = @NombreCompleto,
                           Telefono = @Telefono,
                           Email = @Email,
-                          Direccion = @Direccion,
+                          Direccion = @Direccion
                       WHERE Id = @Id";
       using var command = new MySqlCommand(query, connection);
       command.Parameters.AddWithValue("@DNI", propietario.DNI);

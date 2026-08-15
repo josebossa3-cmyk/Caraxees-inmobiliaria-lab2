@@ -13,11 +13,11 @@ namespace inmobiliaria.Models
 
     [Required(ErrorMessage = "El DNI es obligatorio")]
     [StringLength(20)]
-    public string Dni { get; set; }
+    public string DNI { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "El nombre completo es obligatorio")]
     [StringLength(150)]
-    public string NombreCompleto { get; set; }
+    public string NombreCompleto { get; set; } = string.Empty;
 
     [StringLength(30)]
     public string? Telefono { get; set; }

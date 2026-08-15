@@ -15,7 +15,7 @@ namespace inmobiliaria.Models
 
     [Required(ErrorMessage = "La URL es obligatoria")]
     [StringLength(500)]
-    public string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
 
     [Display(Name = "Es portada")]
     public bool EsPortada { get; set; } = false;

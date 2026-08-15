@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace  inmobiliaria.Controllers
 {
-  public class PropietarioController : Controller
+  public class PropietariosController : Controller
   {
     private readonly PropietarioRepository _repo;
 
-    public PropietarioController(PropietarioRepository repo)
+    public PropietariosController(PropietarioRepository repo)
     {
       _repo = repo;
     }

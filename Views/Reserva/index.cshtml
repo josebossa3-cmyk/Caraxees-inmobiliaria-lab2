@@ -1,11 +1,11 @@
 @model List<Reserva>
 
-<h1>Reservas</h1> 
+<h1>Reservas</h1>
 
-<a asp-action="Create"> nueva Reserva</a> 
+<a asp-action="Create"> nueva Reserva</a>
 
 <Table border="1">
-  <tr>
+    <tr>
         <th>Inquilino</th>
         <th>Inmueble</th>
         <th>Monto x día</th>
@@ -17,17 +17,17 @@
     @foreach (var r in Model)
     {
         <tr>
-        <td>@r.Inquilino.Nombre</td>
-        <td>@r.Inmueble.Nombre</td>
-        <td>@r.MontoPorDia</td>
-        <td>@r.FechaDesde</td>
-        <td>@r.FechaHasta</td>
-        <td>@r.Estado</td>
-        <td> 
-        <a asp-action="Edit" asp-route-id="@r.Id">Editar</a>
-        <a asp-action="Delete" asp-route-id="@r.Id">Eliminar</a>
+            <td>@r.Inquilino?.NombreCompleto</td>
+            <td>@r.Inmueble?.Direccion</td>
+            <td>@r.MontoPorDia</td>
+            <td>@r.FechaDesde</td>
+            <td>@r.FechaHasta</td>
+            <td>@r.Estado</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@r.Id">Editar</a>
+                <a asp-action="Delete" asp-route-id="@r.Id">Eliminar</a>
 
-        </td>
-    </tr>
+            </td>
+        </tr>
     }
 </Table>
