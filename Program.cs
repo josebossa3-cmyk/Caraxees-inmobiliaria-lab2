@@ -1,11 +1,10 @@
-using Microsoft.EntityFrameworkCore;
 using inmobiliaria.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+// registrar la database y el repositorio de propietario
+builder.Services.AddSingleton<Database>();
+builder.Services.AddScoped<PropietarioRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
