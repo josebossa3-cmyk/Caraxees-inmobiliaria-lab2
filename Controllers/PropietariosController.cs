@@ -55,6 +55,14 @@ namespace  inmobiliaria.Controllers
       return View(propietario);
     }
 
+    // get propietarios/editpartial
+    public async Task<IActionResult> EditPartial(int id)
+    {
+      var propietario = await _repo.ObtenerPorIdAsync(id);
+      if (propietario == null) return NotFound();
+      return PartialView("_EditPartial", propietario);
+    }
+
     //post Propietarios edit
     [HttpPost]
     [ValidateAntiForgeryToken]
