@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // registrar la database y el repositorio de propietario
 builder.Services.AddSingleton<Database>();
 builder.Services.AddScoped<PropietarioRepository>();
+builder.Services.AddScoped<InquilinoRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

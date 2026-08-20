@@ -1,30 +1,63 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - inmobiliaria</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/inmobiliaria.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    }
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">inmobiliaria</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2">
+            <div class="container-fluid px-3">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarApp"
+                        aria-controls="navbarApp" aria-expanded="false" aria-label="Abrir menú">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navbarApp">
+                    <ul class="navbar-nav align-items-lg-center gap-lg-2">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link nav-pill @(currentController == "Home" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door-fill"></i> Inicio
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link nav-pill @(currentController == "Usuarios" ? "active" : "")"
+                               asp-controller="Usuarios" asp-action="Index">
+                                <i class="bi bi-person-fill"></i> Usuarios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-pill @(currentController == "Propietarios" ? "active" : "")"
+                               asp-area="" asp-controller="Propietarios" asp-action="Index">
+                                <i class="bi bi-person-standing"></i> Propietarios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-pill @(currentController == "Inquilinos" ? "active" : "")"
+                               asp-area="" asp-controller="Inquilinos" asp-action="Index">
+                                <i class="bi bi-people-fill"></i> Inquilinos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-pill @(currentController == "Inmuebles" ? "active" : "")"
+                               asp-controller="Inmuebles" asp-action="Index">
+                                <i class="bi bi-building"></i> Inmuebles
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-pill @(currentController == "Reserva" ? "active" : "")"
+                               asp-controller="Reserva" asp-action="Index">
+                                <i class="bi bi-file-earmark-text"></i> Reservas
+                            </a>
                         </li>
                     </ul>
                 </div>
