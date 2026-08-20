@@ -77,10 +77,9 @@ namespace inmobiliaria.Models
         {
             using var connection = new MySqlConnection(_database.ConnectionString);
             await connection.OpenAsync();
-            var query = @"INSERT(Id, DNI, NombreCompleto,Telefono,Email,Direccion,FechaAlta) VALUES(@Id, @DNI, @NombreCompleto,@Telefono,@Email,@Direccion,@FechaAlta) ";
+            var query = @"INSERT INTO inquilinos (DNI, NombreCompleto,Telefono,Email,Direccion,FechaAlta) VALUES(@DNI, @NombreCompleto,@Telefono,@Email,@Direccion,@FechaAlta) ";
 
             using var command = new MySqlCommand(query,connection);
-            command.Parameters.AddWithValue("@Id",inquilino.Id);
             command.Parameters.AddWithValue("@DNI",inquilino.DNI);
             command.Parameters.AddWithValue("@NombreCompleto",inquilino.NombreCompleto);
             command.Parameters.AddWithValue("@Telefono",(object?) inquilino.Telefono ?? DBNull.Value);
