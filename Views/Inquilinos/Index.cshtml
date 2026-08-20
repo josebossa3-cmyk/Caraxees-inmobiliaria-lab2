@@ -1,32 +1,107 @@
-@model List<Inquilino>
+@model IEnumerable<inmobiliaria.Models.Inquilino>
 
-<h2>Inquilinos</h2>
+@{
+    ViewData["Title"] = "Inquilinos";
+}
 
-<a asp-action="Create">Nuevo inquilino</a>
+<h1>Inquilinos</h1>
 
-<table border="1">
-    <tr>
-        <th>DNI</th>
-        <th>Nombre completo</th>
-        <th>Teléfono</th>
-        <th>Email</th>
-        <th>Dirección</th>
-        <th>Fecha alta</th>
-        <th></th>
-    </tr>
-    @foreach (var i in Model)
-    {
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nuevo Inquilino</a>
+</p>
+
+<table class="table">
+    <thead>
         <tr>
-            <td>@i.DNI</td>
-            <td>@i.NombreCompleto</td>
-            <td>@i.Telefono</td>
-            <td>@i.Email</td>
-            <td>@i.Direccion</td>
-            <td>@i.FechaAlta.ToShortDateString()</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@i.Id">Editar</a> |
-                <a asp-action="Delete" asp-route-id="@i.Id">Eliminar</a>
-            </td>
+            <th>DNI</th>
+            <th>Nombre Completo</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Dirección</th>
+            <th></th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.DNI</td>
+                <td>@item.NombreCompleto</td>
+                <td>@item.Telefono</td>
+                <td>@item.Email</td>
+                <td>@item.Direccion</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="loadEditModal(@item.Id)">Editar</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                            data-id="@item.Id" data-nombre="@item.NombreCompleto">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
+
+<!--  modal para edicion -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Inquilino</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="editModalBody">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--  modal para eliminar Inquilino -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar eliminacion</h5>
+                <button type="button" data-bs-dismiss="modal" class="btn-close" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">Estas seguro de eliminar al Inquilino: <strong id="inquilinoNombre"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form asp-action="Delete" id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="inquilinoId" name="id">
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        //script del modal para eliminar
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var nombre = button.getAttribute('data-nombre');
+            document.getElementById('inquilinoId').value = id;
+            document.getElementById('inquilinoNombre').textContent = nombre;
+        })
+
+        //script para cargar el form de edicion
+        function loadEditModal(id) {
+            fetch('/Inquilinos/EditPartial/' + id)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('editModalBody').innerHTML = html;
+                    var editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                    editModal.show();
+                })
+                .catch(error => {
+                    console.error('Error al cargar el formulario:', error);
+                });
+        }
+    </script>
+}

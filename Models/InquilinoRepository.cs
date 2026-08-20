@@ -73,7 +73,7 @@ namespace inmobiliaria.Models
             return null;
         }
 
-        public async Task crearAsync(Inquilino inquilino)
+        public async Task CrearAsync(Inquilino inquilino)
         {
             using var connection = new MySqlConnection(_database.ConnectionString);
             await connection.OpenAsync();
@@ -122,6 +122,8 @@ namespace inmobiliaria.Models
             command.Parameters.AddWithValue("@Id", id);
             await command.ExecuteNonQueryAsync();
         }
+
+        
     }
 
 }

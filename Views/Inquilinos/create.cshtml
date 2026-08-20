@@ -1,27 +1,37 @@
-@model Inquilino
+@model inmobiliaria.Models.Inquilino
 
-<h2>Nuevo inquilino</h2>
+@{
+    ViewData["Title"] = "Nuevo Inquilino";
+}
+
+<h1>Nuevo Inquilino</h1>
 
 <form asp-action="Create" method="post">
-    <label>DNI</label>
-    <input asp-for="DNI" />
-    <br />
-
-    <label>Nombre completo</label>
-    <input asp-for="NombreCompleto" />
-    <br />
-
-    <label>Teléfono</label>
-    <input asp-for="Telefono" />
-    <br />
-
-    <label>Email</label>
-    <input asp-for="Email" />
-    <br />
-
-    <label>Dirección</label>
-    <input asp-for="Direccion" />
-    <br />
-
-    <button type="submit">Guardar</button>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="DNI" class="control-label"></label>
+        <input asp-for="DNI" class="form-control">
+        <span asp-validation-for="DNI" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NombreCompleto" class="control-label"></label>
+        <input asp-for="NombreCompleto" class="form-control">
+        <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Telefono" class="control-label"></label>
+        <input asp-for="Telefono" class="form-control">
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control">
+    </div>
+    <div class="form-group">
+        <label asp-for="Direccion" class="control-label"></label>
+        <input asp-for="Direccion" class="form-control">
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Guardar" class="btn btn-success">
+        <a asp-action="Index" class="btn btn-default">Cancelar</a>
+    </div>
 </form>

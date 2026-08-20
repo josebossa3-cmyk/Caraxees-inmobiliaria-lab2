@@ -1,0 +1,44 @@
+@model inmobiliaria.Models.Inquilino
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="editForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id">
+    <input type="hidden" asp-for="FechaAlta">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="DNI" class="form-label"></label>
+        <input asp-for="DNI" class="form-control">
+        <span asp-validation-for="DNI" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NombreCompleto" class="form-label"></label>
+        <input asp-for="NombreCompleto" class="form-control">
+        <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Telefono" class="form-label"></label>
+        <input asp-for="Telefono" class="form-control">
+        <span asp-validation-for="Telefono" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Direccion" class="form-label"></label>
+        <input asp-for="Direccion" class="form-control">
+        <span asp-validation-for="Direccion" class="text-danger"></span>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </div>
+</form>
