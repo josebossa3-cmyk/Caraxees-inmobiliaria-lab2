@@ -31,7 +31,6 @@
                 <td>@item.Email</td>
                 <td>@item.Direccion</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
                     <button type="button" class="btn btn-primary btn-sm" onclick="loadEditModal(@item.Id)">Editar</button>
                     <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
                             data-id="@item.Id" data-nombre="@item.NombreCompleto">Eliminar</button>

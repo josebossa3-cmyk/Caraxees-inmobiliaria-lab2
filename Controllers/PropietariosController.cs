@@ -2,7 +2,7 @@ using inmobiliaria.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace  inmobiliaria.Controllers
+namespace inmobiliaria.Controllers
 {
   public class PropietariosController : Controller
   {
