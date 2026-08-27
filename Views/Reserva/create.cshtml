@@ -1,25 +1,52 @@
 @model Reserva
 
-<h2> Nueva Reserva</h2>
+@{
+  ViewData["Title"] = "Nueva Reserva";
+}
+
+<h2>Nueva Reserva</h2>
 
 <form asp-action="Create" method="post">
-  <label>Inquilino</label>
-  <select asp-for="InquilinoId" asp-items="@(new SelectList(ViewBag.Inquilinos, "Id", "NombreCompleto"))"></select>
-  <br />
+  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-  <label>Inmueble</label>
-  <Select asp-for="InmuebleId" asp-items="@(new SelectList(ViewBag.Inmuebles, "Id", "Direccion"))"></Select>
-  <br />
+  <div class="mb-3">
+    <label asp-for="InquilinoId" class="form-label">Inquilino</label>
+    <select asp-for="InquilinoId" asp-items="@(new SelectList(ViewBag.Inquilinos, "Id", "NombreCompleto"))"
+            class="form-select"></select>
+    <span asp-validation-for="InquilinoId" class="text-danger"></span>
+  </div>
 
-  <label>Monto por dia </label>
-  <input asp-for="MontoPorDia" />
-  <br />
+  <div class="mb-3">
+    <label>Inmueble</label>
+    <select asp-for="InmuebleId" asp-items="@(new SelectList(ViewBag.Inmuebles, "Id", "Direccion"))"
+            class="form-select"></select>
+    <span asp-validation-for="InmuebleId" class="text-danger"></span>
+  </div>
 
-  <label> Fecha desde </label>
-  <input asp-for="FechaDesde" type="date" />
-  <br />
-  <label> Fecha hasta </label>
-  <input asp-for="FechaHasta" type="date" />
-  <br />
-  <button type="submit">Guardar</button>
+  <div class="mb-3">
+    <label asp-for="MontoPorDia" class="form-label">Monto por día</label>
+    <input asp-for="MontoPorDia" class="form-control" />
+    <span asp-validation-for="MontoPorDia" class="text-danger"></span>
+  </div>
+
+  <div class="mb-3">
+    <label asp-for="FechaInicio" class="form-label">Fecha de Inicio</label>
+    <input asp-for="FechaInicio" type="date" class="form-control" />
+    <span asp-validation-for="FechaInicio" class="text-danger"></span>
+  </div>
+
+  <div class="mb-3">
+    <label asp-for="FechaFin" class="form-label">Fecha de Fin</label>
+    <input asp-for="FechaFin" type="date" class="form-control" />
+    <span asp-validation-for="FechaFin" class="text-danger"></span>
+  </div>
+
+  <div class="mb-3">
+    <label asp-for="PorcentajeReserva" class="form-label">Porcentaje de reserva</label>
+    <input asp-for="PorcentajeReserva" type="text" />
+    <span asp-validation-for="PorcentajeReserva" class="text-danger"></span>
+  </div>
+
+  <button type="submit" class="btn btn-success">Guardar</button>
+  <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>

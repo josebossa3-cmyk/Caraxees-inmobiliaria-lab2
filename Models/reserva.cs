@@ -18,20 +18,24 @@ namespace inmobiliaria.Models
     public int InmuebleId { get; set; }
     public Inmueble? Inmueble { get; set; }
 
+    [Required(ErrorMessage = "La fecha de inicio es obligatoria")]
+    [Display(Name = "Fecha de inicio")]
+    [Column(TypeName = "date")]
+    public DateTime FechaInicio { get; set; }
+
+    [Required(ErrorMessage = "La fecha de fin es obligatoria")]
+    [Display(Name = "Fecha de fin")]
+    [Column(TypeName = "date")]
+    public DateTime FechaFin { get; set; }
+
+    [Required(ErrorMessage = "La fecha de fin original es obligatoria")]
+    [Display(Name = "Fecha de fin original")]
+    [Column(TypeName = "date")]
+    public DateTime FechaFinOriginal { get; set; }
+
     [Required(ErrorMessage = "El monto por día es obligatorio")]
     [Column(TypeName = "decimal(10,2)")]
     public decimal MontoPorDia { get; set; }
-
-    [Required(ErrorMessage = "La fecha desde es obligatoria")]
-    [Display(Name = "Fecha desde")]
-    public DateTime FechaDesde { get; set; }
-
-    [Required(ErrorMessage = "La fecha hasta es obligatoria")]
-    [Display(Name = "Fecha hasta")]
-    public DateTime FechaHasta { get; set; }
-
-    [Display(Name = "Fecha fin")]
-    public DateTime? FechaFin { get; set; }
 
     [Column(TypeName = "decimal(5,2)")]
     [Display(Name = "Porcentaje de reserva")]
@@ -41,13 +45,13 @@ namespace inmobiliaria.Models
     [StringLength(30)]
     public string Estado { get; set; } = "Vigente";
 
-    [Display(Name = "Fecha de reserva")]
-    public DateTime FechaReserva { get; set; } = DateTime.Now;
+    [Display(Name = "Fecha de terminación")]
+    public DateTime? FechaTerminacion { get; set; }
 
     [Column(TypeName = "decimal(10,2)")]
     public decimal? Multa { get; set; }
 
-    [Display(Name = "Reserva renovada")]
+    [Display(Name = "Reserva renovada de")]
     public int? ReservaRenovadaId { get; set; }
     public Reserva? ReservaRenovada { get; set; }
 
@@ -60,7 +64,7 @@ namespace inmobiliaria.Models
     public int? UsuarioTerminadorId { get; set; }
     public Usuario? UsuarioTerminador { get; set; }
 
-    [Display(Name = "Fecha de terminación")]
-    public DateTime? FechaTerminacion { get; set; }
+    [Display(Name = "Fecha de creacion")]
+    public DateTime FechaCreacion { get; set; } = DateTime.Now;
   }
 }

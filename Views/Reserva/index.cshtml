@@ -1,33 +1,41 @@
 @model List<Reserva>
 
+@{
+    ViewData["Title"] = "Reservas";
+}
+
 <h1>Reservas</h1>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nueva Reserva</a>
+</p>
 
-<a asp-action="Create"> nueva Reserva</a>
-
-<Table border="1">
-    <tr>
-        <th>Inquilino</th>
-        <th>Inmueble</th>
-        <th>Monto x día</th>
-        <th>Desde</th>
-        <th>Hasta</th>
-        <th>Estado</th>
-        <th></th>
-    </tr>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Inquilino</th>
+            <th>Inmueble</th>
+            <th>Monto por día</th>
+            <th>Fecha inicio</th>
+            <th>Fecha fin</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
     @foreach (var r in Model)
     {
         <tr>
             <td>@r.Inquilino?.NombreCompleto</td>
             <td>@r.Inmueble?.Direccion</td>
             <td>@r.MontoPorDia</td>
-            <td>@r.FechaDesde</td>
-            <td>@r.FechaHasta</td>
+            <td>@r.FechaInicio.ToString("dd/MM/yyyy")</td>
+            <td>@r.FechaFin.ToString("dd/MM/yyyy")</td>
             <td>@r.Estado</td>
             <td>
-                <a asp-action="Edit" asp-route-id="@r.Id">Editar</a>
-                <a asp-action="Delete" asp-route-id="@r.Id">Eliminar</a>
-
+                <a asp-action="Edit" asp-route-id="@r.Id" class="btn btn-sm btn-warning">Editar</a>
+                <a asp-action="Delete" asp-route-id="@r.Id" class="btn btn-sm btn-danger">Eliminar</a>
             </td>
         </tr>
     }
+    </tbody>
 </Table>
