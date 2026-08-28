@@ -7,6 +7,7 @@ builder.Services.AddSingleton<Database>();
 builder.Services.AddScoped<PropietarioRepository>();
 builder.Services.AddScoped<InquilinoRepository>();
 builder.Services.AddScoped<InmuebleRepository>();
+builder.Services.AddScoped<ReservaRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

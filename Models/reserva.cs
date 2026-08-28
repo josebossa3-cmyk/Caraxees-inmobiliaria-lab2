@@ -52,7 +52,7 @@ namespace inmobiliaria.Models
     public decimal? Multa { get; set; }
 
     [Display(Name = "Reserva renovada de")]
-    public int? ReservaRenovadaId { get; set; }
+    public int? ReservaRenovadaDeId { get; set; }
     public Reserva? ReservaRenovada { get; set; }
 
     [Required(ErrorMessage = "El usuario creador es obligatorio")]
