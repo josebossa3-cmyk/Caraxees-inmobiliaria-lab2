@@ -39,8 +39,8 @@ namespace inmobiliaria.Controllers
             await CargarCombos();
             var reserva = new Reserva()
             {
-                FechaDesde = DateTime.Now,
-                FechaHasta = DateTime.Now.AddDays(30),
+                FechaInicio = DateTime.Now,
+                FechaFin = DateTime.Now.AddDays(30),
             };
             return View(reserva);
         }
@@ -53,7 +53,7 @@ namespace inmobiliaria.Controllers
             ModelState.Remove(nameof(reserva.Estado));
             ValidarFechas(reserva);
 
-            if (ModelState.IsValid && await _repo.ExisteSuperposicionAsync(reserva.InmuebleId, reserva.FechaDesde, reserva.FechaHasta))
+            if (ModelState.IsValid && await _repo.FechaReservadaAsync(reserva.InmuebleId, reserva.FechaInicio, reserva.FechaFin))
             {
                 ModelState.AddModelError(string.Empty, "Ya existe una reserva vigente para ese inmueble en ese rango de fechas.");
             }
@@ -65,7 +65,7 @@ namespace inmobiliaria.Controllers
             }
 
             reserva.Estado = "Vigente";
-            reserva.FechaReserva = DateTime.Now;
+            reserva.FechaCreacion = DateTime.Now;
             reserva.UsuarioCreadorId = UsuarioActualId;
 
             await _repo.CrearAsync(reserva);
@@ -99,7 +99,7 @@ namespace inmobiliaria.Controllers
 
             ValidarFechas(reserva);
 
-            if (ModelState.IsValid && await _repo.ExisteSuperposicionAsync(reserva.InmuebleId, reserva.FechaDesde, reserva.FechaHasta, id))
+            if (ModelState.IsValid && await _repo.FechaReservadaAsync(reserva.InmuebleId, reserva.FechaInicio, reserva.FechaFin, id))
             {
                 ModelState.AddModelError(string.Empty, "Ya existe una reserva vigente para ese inmueble en ese rango de fechas.");
             }
@@ -113,8 +113,8 @@ namespace inmobiliaria.Controllers
             reservaDb.InquilinoId = reserva.InquilinoId;
             reservaDb.InmuebleId = reserva.InmuebleId;
             reservaDb.MontoPorDia = reserva.MontoPorDia;
-            reservaDb.FechaDesde = reserva.FechaDesde;
-            reservaDb.FechaHasta = reserva.FechaHasta;
+            reservaDb.FechaInicio = reserva.FechaInicio;
+            reservaDb.FechaFin = reserva.FechaFin;
             reservaDb.PorcentajeReserva = reserva.PorcentajeReserva;
 
             await _repo.ActualizarAsync(reservaDb);
@@ -170,7 +170,7 @@ namespace inmobiliaria.Controllers
             var original = await _repo.ObtenerPorIdAsync(id);
             if (original == null) return NotFound();
 
-            var dias = (original.FechaHasta - original.FechaDesde).Days;
+            var dias = (original.FechaFin - original.FechaInicio).Days;
             if (dias < 1) dias = 1;
 
             var nueva = new Reserva
@@ -179,9 +179,9 @@ namespace inmobiliaria.Controllers
                 InmuebleId = original.InmuebleId,
                 MontoPorDia = original.MontoPorDia,
                 PorcentajeReserva = original.PorcentajeReserva,
-                FechaDesde = original.FechaHasta,
-                FechaHasta = original.FechaHasta.AddDays(dias),
-                ReservaRenovadaId = original.Id
+                FechaInicio = original.FechaFin,
+                FechaFin = original.FechaFin.AddDays(dias),
+                ReservaRenovadaDeId = original.Id
             };
 
             await CargarCombos();
@@ -199,10 +199,10 @@ namespace inmobiliaria.Controllers
             ModelState.Remove(nameof(Reserva.UsuarioCreadorId));
             ModelState.Remove(nameof(Reserva.Estado));
 
-            reserva.ReservaRenovadaId = original.Id;
+            reserva.ReservaRenovadaDeId = original.Id;
             ValidarFechas(reserva);
 
-            if (ModelState.IsValid && await _repo.ExisteSuperposicionAsync(reserva.InmuebleId, reserva.FechaDesde, reserva.FechaHasta))
+            if (ModelState.IsValid && await _repo.FechaReservadaAsync(reserva.InmuebleId, reserva.FechaInicio, reserva.FechaFin))
             {
                 ModelState.AddModelError(string.Empty, "Ya existe una reserva vigente para ese inmueble en ese rango de fechas.");
             }
@@ -214,7 +214,7 @@ namespace inmobiliaria.Controllers
             }
 
             reserva.Estado = "Vigente";
-            reserva.FechaReserva = DateTime.Now;
+            reserva.FechaCreacion = DateTime.Now;
             reserva.UsuarioCreadorId = UsuarioActualId;
 
             await _repo.CrearAsync(reserva);
@@ -256,9 +256,9 @@ namespace inmobiliaria.Controllers
 
         private void ValidarFechas(Reserva reserva)
         {
-            if (reserva.FechaHasta <= reserva.FechaDesde)
+            if (reserva.FechaFin <= reserva.FechaInicio)
             {
-                ModelState.AddModelError(nameof(reserva.FechaHasta), "La fecha hasta debe ser posterior a la fecha desde.");
+                ModelState.AddModelError(nameof(reserva.FechaFin), "La fecha hasta debe ser posterior a la fecha desde.");
             }
         }
 
