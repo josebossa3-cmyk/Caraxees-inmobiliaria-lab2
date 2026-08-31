@@ -151,12 +151,13 @@ namespace inmobiliaria.Models
                             MontoPorDia = @MontoPorDia,
                             PorcentajeReserva = @PorcentajeReserva,
                             Estado = @Estado ,
-                            FechaTerminacion = @FechaTermiancion , 
+                            FechaTerminacion = @FechaTerminacion, 
                             Multa = @Multa,
                             ReservaRenovadaDeId = @ReservaRenovadaDeId,
                             UsuarioCreadorId = @UsuarioCreadorId,
                             UsuarioTerminadorId = @UsuarioTerminadorId,
-                            FechaCreacion = @FechaCreacion";
+                            FechaCreacion = @FechaCreacion
+                            WHERE Id = @Id";
             using var command = new MySqlCommand(query,connection);
             command.Parameters.AddWithValue("@InquilinoId",reserva.InquilinoId);
             command.Parameters.AddWithValue("@InmuebleId",reserva.InmuebleId);
@@ -172,6 +173,7 @@ namespace inmobiliaria.Models
             command.Parameters.AddWithValue("@UsuarioCreadorId",reserva.UsuarioCreadorId);
             command.Parameters.AddWithValue("@UsuarioTerminadorId", (object?) reserva.UsuarioTerminadorId ?? DBNull.Value);
             command.Parameters.AddWithValue("@FechaCreacion",reserva.FechaCreacion);
+            command.Parameters.AddWithValue("@Id",reserva.Id);
             await command.ExecuteNonQueryAsync();
 
         }
@@ -187,6 +189,52 @@ namespace inmobiliaria.Models
             
                 
             
+        }
+
+        public async Task<bool> FechaReservadaAsync(int inquilinoId, DateTime fechaInicio,DateTime fechaFin, int? excluirReservaId = null)
+        {
+            using var connection = new MySqlConnection(_database.ConnectionString);
+            await connection.OpenAsync();
+            var query = @"SELECT COUNT(*)
+                        FROM reservas
+                        WHERE InquilinoId = @InquilinoId
+                        AND Estado = 'Vigente'
+                        AND FechaInicio < @FechaFin
+                        AND FechaFin > @FechaInicio
+                        AND (@ExcluirReservaId IS NULL OR Id != @ExcluirReservaId)";
+            using var command = new MySqlCommand(query,connection);
+            command.Parameters.AddWithValue("@InquilinoId",inquilinoId);
+            command.Parameters.AddWithValue("@FechaInicio",fechaInicio);
+            command.Parameters.AddWithValue("@FechaFin",fechaFin);
+            command.Parameters.AddWithValue("@ExcluirReservaId", (object?) excluirReservaId ?? DBNull.Value );            
+            var resultado = await command.ExecuteScalarAsync();
+            var cantidad  = Convert.ToInt32(resultado);
+            return cantidad > 0;
+        }
+
+        public async Task CambiarEstadoAsync(int id, string estado, decimal? multa,DateTime? fechaFin, int usuarioTerminadorId,DateTime fechaTerminacion)
+        {
+            using var connection = new MySqlConnection(_database.ConnectionString);
+            await connection.OpenAsync();
+            var query = @"
+                UPDATE reservas
+                SET Estado = @Estado,
+                    Multa = @Multa,
+                    FechaFin = COALESCE(@FechaFin, FechaFin),
+                    UsuarioTerminadorId = @UsuarioId,
+                    FechaTerminacion = @FechaTerminacion
+                WHERE Id = @Id";
+
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@Id", id);
+            command.Parameters.AddWithValue("@Estado", estado);
+            command.Parameters.AddWithValue("@Multa", (object?)multa ?? DBNull.Value);
+            command.Parameters.AddWithValue("@FechaFin", (object?)fechaFin ?? DBNull.Value);
+            command.Parameters.AddWithValue("@UsuarioTerminadorId", usuarioTerminadorId);
+            command.Parameters.AddWithValue("@FechaTerminacion", fechaTerminacion);
+
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
         }
     }
 }
