@@ -51,6 +51,8 @@ namespace inmobiliaria.Controllers
         {
             ModelState.Remove(nameof(reserva.UsuarioCreadorId));
             ModelState.Remove(nameof(reserva.Estado));
+            ModelState.Remove(nameof(Reserva.FechaFinOriginal));
+
             ValidarFechas(reserva);
 
             if (ModelState.IsValid && await _repo.FechaReservadaAsync(reserva.InmuebleId, reserva.FechaInicio, reserva.FechaFin))
@@ -67,6 +69,7 @@ namespace inmobiliaria.Controllers
             reserva.Estado = "Vigente";
             reserva.FechaCreacion = DateTime.Now;
             reserva.UsuarioCreadorId = UsuarioActualId;
+            reserva.FechaFinOriginal = reserva.FechaFin;
 
             await _repo.CrearAsync(reserva);
 
@@ -96,6 +99,7 @@ namespace inmobiliaria.Controllers
 
             ModelState.Remove(nameof(Reserva.UsuarioCreadorId));
             ModelState.Remove(nameof(Reserva.Estado));
+            ModelState.Remove(nameof(Reserva.FechaFinOriginal));
 
             ValidarFechas(reserva);
 
@@ -126,21 +130,9 @@ namespace inmobiliaria.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Cancelar(int id, decimal? multa)
+        public async Task<IActionResult> Cancelar(int id)
         {
-            var reserva = await _repo.ObtenerPorIdAsync(id);
-            if (reserva == null) return NotFound();
-
-            if (reserva.Estado != "Vigente")
-            {
-                TempData["Error"] = "Solo se pueden cancelar reservas vigentes.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            await _repo.CambiarEstadoAsync(id, "Cancelada", multa, fechaFin: null, UsuarioActualId, DateTime.Now);
-
-            TempData["Mensaje"] = "Reserva cancelada.";
-            return RedirectToAction(nameof(Index));
+            return await Terminar(id);
         }
 
 
@@ -157,10 +149,11 @@ namespace inmobiliaria.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var ahora = DateTime.Now;
-            await _repo.CambiarEstadoAsync(id, "Terminada", multa: null, fechaFin: ahora, UsuarioActualId, ahora);
+            var fechaTerminacion = DateTime.Now;
+            var multa = CalcularMulta(reserva, fechaTerminacion);
+            await _repo.CambiarEstadoAsync(id, "TerminadaAnticipadamente", multa, fechaFin: null, usuarioTerminadorId: UsuarioActualId, fechaTerminacion: fechaTerminacion);
 
-            TempData["Mensaje"] = "Reserva terminada.";
+            TempData["Mensaje"] = $"Reserva terminada anticipadamente. Multa calculada: {multa:C}.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -198,6 +191,7 @@ namespace inmobiliaria.Controllers
 
             ModelState.Remove(nameof(Reserva.UsuarioCreadorId));
             ModelState.Remove(nameof(Reserva.Estado));
+            ModelState.Remove(nameof(Reserva.FechaFinOriginal));
 
             reserva.ReservaRenovadaDeId = original.Id;
             ValidarFechas(reserva);
@@ -216,6 +210,7 @@ namespace inmobiliaria.Controllers
             reserva.Estado = "Vigente";
             reserva.FechaCreacion = DateTime.Now;
             reserva.UsuarioCreadorId = UsuarioActualId;
+            reserva.FechaFinOriginal = reserva.FechaFin;
 
             await _repo.CrearAsync(reserva);
 
@@ -266,6 +261,21 @@ namespace inmobiliaria.Controllers
         {
             ViewBag.Inquilinos = await _inquilinoRepo.ObtenerTodosAsync();
             ViewBag.Inmuebles = await _inmuebleRepo.ObtenerDisponiblesAsync();
+        }
+
+        private decimal CalcularMulta(Reserva reserva, DateTime fechaTerminacion)
+        {
+            var diasTotales = (reserva.FechaFinOriginal - reserva.FechaInicio).Days;
+            var diasTranscurridos = (fechaTerminacion - reserva.FechaInicio).Days;
+
+            // aca si se cumple menos de la mitad del tiempo original la multa es del 50%, caso contrario 25%
+            var porcentaje = diasTranscurridos < diasTotales / 2.0 ? 0.50m : 0.25m;
+
+            var diasRestantes = (reserva.FechaFinOriginal - fechaTerminacion).Days;
+            if (diasRestantes < 0) diasRestantes = 0;
+
+            var saldoRestante = diasRestantes * reserva.MontoPorDia;
+            return saldoRestante * porcentaje;
         }
     }
 }

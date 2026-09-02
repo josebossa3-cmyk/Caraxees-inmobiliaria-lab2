@@ -20,7 +20,7 @@ namespace inmobiliaria.Models
             await connection.OpenAsync();
 
             var query = @"SELECT i.Id, i.PropietarioId, i.TipoInmuebleId, i.Direccion, i.Cupo, i.PrecioPorDia, i.PorcentajeReserva, i.Estado, i.Coordenadas, i.ImagenPortada, i.FechaAlta,
-                                p.Id, p.DNI, p.NombreCompleto, p.Telefono, p.Email, p.Direccion, p.FechaAlta
+                                p.Id AS PropId, p.DNI, p.NombreCompleto, p.Telefono, p.Email, p.Direccion AS PropietarioDireccion, p.FechaAlta as PropFechaAlta
                         FROM inmuebles i
                         LEFT JOIN propietarios p ON i.PropietarioId = p.Id
                         ORDER BY i.Direccion";
@@ -44,13 +44,13 @@ namespace inmobiliaria.Models
                     FechaAlta = reader.GetDateTime("FechaAlta"),
                     Propietario = new Propietario
                     {
-                        Id = reader.GetInt32("PropietarioId"),
+                        Id = reader.GetInt32("PropId"),
                         DNI = reader.GetString("DNI"),
                         NombreCompleto = reader.GetString("NombreCompleto"),
                         Telefono = reader.IsDBNull(reader.GetOrdinal("Telefono")) ? null : reader.GetString("Telefono"),
                         Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString("Email"),
-                        Direccion = reader.IsDBNull(reader.GetOrdinal("Direccion")) ? null : reader.GetString("Direccion"),
-                        FechaAlta = reader.GetDateTime("FechaAlta")
+                        Direccion = reader.IsDBNull(reader.GetOrdinal("PropietarioDireccion")) ? null : reader.GetString("Direccion"),
+                        FechaAlta = reader.GetDateTime("PropFechaAlta")
                     }
                 });
             }
@@ -96,7 +96,7 @@ namespace inmobiliaria.Models
             await connection.OpenAsync();
 
             var query = @"SELECT i.Id, i.PropietarioId, i.TipoInmuebleId, i.Direccion, i.Cupo, i.PrecioPorDia, i.PorcentajeReserva, i.Estado, i.Coordenadas, i.ImagenPortada, i.FechaAlta,
-                                p.Id, p.DNI, p.NombreCompleto, p.Telefono, p.Email, p.Direccion, p.FechaAlta
+                                p.Id AS PropId, p.DNI, p.NombreCompleto, p.Telefono, p.Email, p.Direccion AS PropietarioDireccion, p.FechaAlta as PropFechaAlta
                         FROM inmuebles i
                         LEFT JOIN propietarios p ON i.PropietarioId = p.Id
                         WHERE i.Id = @Id";
@@ -121,13 +121,13 @@ namespace inmobiliaria.Models
                     FechaAlta = reader.GetDateTime("FechaAlta"),
                     Propietario = new Propietario
                     {
-                        Id = reader.GetInt32("PropietarioId"),
+                        Id = reader.GetInt32("PropId"),
                         DNI = reader.GetString("DNI"),
                         NombreCompleto = reader.GetString("NombreCompleto"),
                         Telefono = reader.IsDBNull(reader.GetOrdinal("Telefono")) ? null : reader.GetString("Telefono"),
                         Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString("Email"),
-                        Direccion = reader.IsDBNull(reader.GetOrdinal("Direccion")) ? null : reader.GetString("Direccion"),
-                        FechaAlta = reader.GetDateTime("FechaAlta")
+                        Direccion = reader.IsDBNull(reader.GetOrdinal("Direccion")) ? null : reader.GetString("PropietarioDireccion"),
+                        FechaAlta = reader.GetDateTime("PropFechaAlta")
                     }
                 };
             }

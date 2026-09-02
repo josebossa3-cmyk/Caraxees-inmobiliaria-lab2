@@ -1,24 +1,27 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-public class Pago
+namespace inmobiliaria.Models
 {
-    public int Id { get; set;}
-    public int ReservaId { get; set;}
+    public class Pago
+    {
+        public int Id { get; set; }
+        public int ReservaId { get; set; }
 
-    public string Concepto { get; set;} = "";
+        public string Concepto { get; set; } = "";
 
-    public DateTime FechaPago { get; set; }
+        public DateTime FechaPago { get; set; }
 
-    public decimal Importe { get; set; }
+        public decimal Importe { get; set; }
 
-    public Boolean Estado { get; set; }
+        public Boolean Estado { get; set; }
 
-    public int UsuarioCreadorId { get; set;}
+        public int UsuarioCreadorId { get; set; }
 
-    public int UsuarioAnuladorId { get; set; }
+        public int UsuarioAnuladorId { get; set; }
 
-    public DateTime FechaAnulacion { get; set;}
+        public DateTime FechaAnulacion { get; set; }
 
 
+    }
 }
