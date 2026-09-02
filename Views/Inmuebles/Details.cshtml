@@ -1,0 +1,32 @@
+@model inmobiliaria.Models.Inmueble
+
+@{
+  ViewData["Title"] = "Detalles de Inmueble";
+}
+
+<h1>Detalles</h1>
+
+<div>
+  <hr>
+  <dl class="row">
+    <dt>Dirección</dt>
+    <dd>@Model.Direccion</dd>
+    <dt>Propietario</dt>
+    <dd>@Model.Propietario?.NombreCompleto</dd>
+    <dt>Tipo</dt>
+    <dd>@Model.TipoInmueble?.Nombre</dd>
+    <dt>Cupo</dt>
+    <dd>@Model.Cupo</dd>
+    <dt>Precio por dia</dt>
+    <dd>@Model.PrecioPorDia.ToString("C")</dd>
+    <dt>Porcentaje reserva</dt>
+    <dd>@Model.PorcentajeReserva%</dd>
+    <dt>Estado</dt>
+    <dd>@(Model.Estado ? "Disponible" : "Suspendido")</dd>
+  </dl>
+</div>
+
+<div>
+  <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+  <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</div>
