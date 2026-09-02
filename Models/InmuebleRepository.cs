@@ -133,5 +133,77 @@ namespace inmobiliaria.Models
             }
             return null;
         }
+
+        public async Task CrearAsync(Inmueble inmueble)
+        {
+            using var connection = new MySqlConnection(_database.ConnectionString);
+            await connection.OpenAsync();
+
+            var query = @"
+            INSERT INTO inmuebles (PropietarioId, TipoInmuebleId, Direccion, Cupo, PrecioPorDia, PorcentajeReserva, Estado, Coordenadas, ImagenPortada, FechaAlta) 
+            VALUES (@PropietarioId, @TipoInmuebleId, @Direccion, @Cupo, @PrecioPorDia, @PorcentajeReserva, @Estado, @Coordenadas, @ImagenPortada, @FechaAlta)";
+
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@PropietarioId", inmueble.PropietarioId);
+            command.Parameters.AddWithValue("@TipoInmuebleId", inmueble.TipoInmuebleId);
+            command.Parameters.AddWithValue("@Direccion", inmueble.Direccion);
+            command.Parameters.AddWithValue("@Cupo", inmueble.Cupo);
+            command.Parameters.AddWithValue("@PrecioPorDia", inmueble.PrecioPorDia);
+            command.Parameters.AddWithValue("@PorcentajeReserva", inmueble.PorcentajeReserva);
+            command.Parameters.AddWithValue("@Estado", inmueble.Estado);
+            command.Parameters.AddWithValue("@Coordenadas", (object?)inmueble.Coordenadas ?? DBNull.Value);
+            command.Parameters.AddWithValue("@ImagenPortada", (object?)inmueble.ImagenPortada ?? DBNull.Value);
+            command.Parameters.AddWithValue("@FechaAlta", inmueble.FechaAlta);
+
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task ActualizarAsync(Inmueble inmueble)
+        {
+            using var connection = new MySqlConnection(_database.ConnectionString);
+            await connection.OpenAsync();
+
+            var query = @"
+                UPDATE inmuebles SET
+                    PropietarioId = @PropietarioId,
+                    TipoInmuebleId = @TipoInmuebleId,
+                    Direccion = @Direccion,
+                    Cupo = @Cupo,
+                    PrecioPorDia = @PrecioPorDia,
+                    PorcentajeReserva = @PorcentajeReserva,
+                    Estado = @Estado,
+                    Coordenadas = @Coordenadas,
+                    ImagenPortada = @ImagenPortada,
+                    FechaAlta = @FechaAlta
+                WHERE Id = @Id";
+
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@Id", inmueble.Id);
+            command.Parameters.AddWithValue("@PropietarioId", inmueble.PropietarioId);
+            command.Parameters.AddWithValue("@TipoInmuebleId", inmueble.TipoInmuebleId);
+            command.Parameters.AddWithValue("@Direccion", inmueble.Direccion);
+            command.Parameters.AddWithValue("@Cupo", inmueble.Cupo);
+            command.Parameters.AddWithValue("@PrecioPorDia", inmueble.PrecioPorDia);
+            command.Parameters.AddWithValue("@PorcentajeReserva", inmueble.PorcentajeReserva);
+            command.Parameters.AddWithValue("@Estado", inmueble.Estado);
+            command.Parameters.AddWithValue("@Coordenadas", (object?)inmueble.Coordenadas ?? DBNull.Value);
+            command.Parameters.AddWithValue("@ImagenPortada", (object?)inmueble.ImagenPortada ?? DBNull.Value);
+            command.Parameters.AddWithValue("@FechaAlta", inmueble.FechaAlta);
+
+            await command.ExecuteNonQueryAsync();
+
+        }
+        
+        public async Task EliminarAsync(int id)
+        {
+            using var connection = new MySqlConnection(_database.ConnectionString);
+            await connection.OpenAsync();
+
+            var query = "DELETE FROM inmuebles WHERE Id = @Id";
+            using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddWithValue("@Id", id);
+
+            await command.ExecuteNonQueryAsync();
+        }
     }
 }
