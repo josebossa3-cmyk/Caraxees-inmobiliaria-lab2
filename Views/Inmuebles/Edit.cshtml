@@ -7,12 +7,12 @@
 <h1>Editar Inmueble</h1>
 
 <form asp-action="Edit" method="post">
-  <input type="hidden" asp-for="Id"/>
-  <input type="hidden" asp-for="FechaAlta"/>
+  <input type="hidden" asp-for="Id" />
+  <input type="hidden" asp-for="FechaAlta" />
   <div asp-validation-summary="ModelOnly" class="text-danger"></div>
   <div class="mb-3">
     <label asp-for="PropietarioId" class="form-label"></label>
-    <select asp-for="PropietarioId" asp-items="ViewBag.Propietarios" class="form-select">
+    <select asp-for="PropietarioId" asp-items="ViewBag.Propietario" class="form-select">
       <option value="">-- Seleccione Propietario --</option>
     </select>
     <span asp-validation-for="PropietarioId" class="text-danger"></span>
@@ -20,7 +20,7 @@
 
   <div class="mb-3">
     <label asp-for="TipoInmuebleId" class="form-label"></label>
-    <select asp-for="TipoInmuebleId" asp-items="ViewBag.TiposInmuebles" class="form-select">
+    <select asp-for="TipoInmuebleId" asp-items="ViewBag.TiposInmueble" class="form-select">
       <option value="">-- Seleccione Tipo --</option>
     </select>
     <span asp-validation-for="TipoInmuebleId" class="text-danger"></span>

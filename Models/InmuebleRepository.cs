@@ -20,9 +20,10 @@ namespace inmobiliaria.Models
             await connection.OpenAsync();
 
             var query = @"SELECT i.Id, i.PropietarioId, i.TipoInmuebleId, i.Direccion, i.Cupo, i.PrecioPorDia, i.PorcentajeReserva, i.Estado, i.Coordenadas, i.ImagenPortada, i.FechaAlta,
-                                p.Id AS PropId, p.DNI, p.NombreCompleto, p.Telefono, p.Email, p.Direccion AS PropietarioDireccion, p.FechaAlta as PropFechaAlta
+                                p.Id AS PropId, p.DNI, p.NombreCompleto, p.Telefono, p.Email, p.Direccion AS PropietarioDireccion, p.FechaAlta as PropFechaAlta, t.Id as TipoId, t.Nombre AS TipoNombre
                         FROM inmuebles i
                         LEFT JOIN propietarios p ON i.PropietarioId = p.Id
+                        LEFT JOIN tiposinmueble t ON i.TipoInmuebleId = t.Id
                         ORDER BY i.Direccion";
             using var command = new MySqlCommand(query, connection);
             using var reader = await command.ExecuteReaderAsync();
@@ -51,6 +52,11 @@ namespace inmobiliaria.Models
                         Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString("Email"),
                         Direccion = reader.IsDBNull(reader.GetOrdinal("PropietarioDireccion")) ? null : reader.GetString("Direccion"),
                         FechaAlta = reader.GetDateTime("PropFechaAlta")
+                    },
+                    TipoInmueble = new TipoInmueble
+                    {
+                        Id = reader.GetInt32("TipoId"),
+                        Nombre = reader.GetString("TipoNombre")
                     }
                 });
             }
@@ -63,10 +69,12 @@ namespace inmobiliaria.Models
             using var connection = new MySqlConnection(_database.ConnectionString);
             await connection.OpenAsync();
 
-            var query = @"SELECT i.Id, i.PropietarioId, i.TipoInmuebleId, i.Direccion, i.Cupo, i.PrecioPorDia, i.PorcentajeReserva, i.Estado, i.Coordenadas, i.ImagenPortada, i.FechaAlta
+            var query = @"SELECT i.Id, i.PropietarioId, i.TipoInmuebleId, i.Direccion, i.Cupo, i.PrecioPorDia, i.PorcentajeReserva, i.Estado, i.Coordenadas, i.ImagenPortada, i.FechaAlta, t.Id AS TipoId, t.Nombre AS TipoNombre
                         FROM inmuebles i
+                        LEFT JOIN tiposinmueble t ON i.TipoInmuebleId = t.Id
                         WHERE i.Estado = 1
                         ORDER BY i.Direccion";
+
             using var command = new MySqlCommand(query, connection);
             using var reader = await command.ExecuteReaderAsync();
 
@@ -84,7 +92,12 @@ namespace inmobiliaria.Models
                     Estado = reader.GetBoolean("Estado"),
                     Coordenadas = reader.IsDBNull(reader.GetOrdinal("Coordenadas")) ? null : reader.GetString("Coordenadas"),
                     ImagenPortada = reader.IsDBNull(reader.GetOrdinal("ImagenPortada")) ? null : reader.GetString("ImagenPortada"),
-                    FechaAlta = reader.GetDateTime("FechaAlta")
+                    FechaAlta = reader.GetDateTime("FechaAlta"),
+                    TipoInmueble = new TipoInmueble
+                    {
+                        Id = reader.GetInt32("TipoId"),
+                        Nombre = reader.GetString("TipoNombre")
+                    }
                 });
             }
             return lista;
@@ -96,9 +109,10 @@ namespace inmobiliaria.Models
             await connection.OpenAsync();
 
             var query = @"SELECT i.Id, i.PropietarioId, i.TipoInmuebleId, i.Direccion, i.Cupo, i.PrecioPorDia, i.PorcentajeReserva, i.Estado, i.Coordenadas, i.ImagenPortada, i.FechaAlta,
-                                p.Id AS PropId, p.DNI, p.NombreCompleto, p.Telefono, p.Email, p.Direccion AS PropietarioDireccion, p.FechaAlta as PropFechaAlta
+                                p.Id AS PropId, p.DNI, p.NombreCompleto, p.Telefono, p.Email, p.Direccion AS PropietarioDireccion, p.FechaAlta as PropFechaAlta, t.Id as TipoId, t.Nombre as TipoNombre
                         FROM inmuebles i
                         LEFT JOIN propietarios p ON i.PropietarioId = p.Id
+                        LEFT JOIN tiposinmueble t ON i.TipoInmuebleId = t.Id
                         WHERE i.Id = @Id";
             using var command = new MySqlCommand(query, connection);
             command.Parameters.AddWithValue("@Id", id);
@@ -128,6 +142,11 @@ namespace inmobiliaria.Models
                         Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString("Email"),
                         Direccion = reader.IsDBNull(reader.GetOrdinal("Direccion")) ? null : reader.GetString("PropietarioDireccion"),
                         FechaAlta = reader.GetDateTime("PropFechaAlta")
+                    },
+                    TipoInmueble = new TipoInmueble
+                    {
+                        Id = reader.GetInt32("TipoId"),
+                        Nombre = reader.GetString("TipoNombre")
                     }
                 };
             }
@@ -193,7 +212,7 @@ namespace inmobiliaria.Models
             await command.ExecuteNonQueryAsync();
 
         }
-        
+
         public async Task EliminarAsync(int id)
         {
             using var connection = new MySqlConnection(_database.ConnectionString);
