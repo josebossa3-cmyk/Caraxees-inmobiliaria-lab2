@@ -13,6 +13,7 @@
 <table class="table table-striped">
   <thead>
     <tr>
+      <th>Imagen</th>
       <th>Dirección</th>
       <th>Propietario</th>
       <th>Tipo</th>
@@ -25,6 +26,19 @@
     @foreach (var item in Model)
     {
       <tr>
+        <td>
+          @if (!string.IsNullOrEmpty(item.ImagenPortada))
+          {
+            <a href="@item.ImagenPortada" target="_black">
+              <img src="@item.ImagenPortada" alt="Portada" style="max-width: 80px; max-height: 60px;"
+                   class="img-thumbnail" />
+            </a>
+          }
+          else
+          {
+            <span class="text-muted">Sin imagen</span>
+          }
+        </td>
         <td>@item.Direccion</td>
         <td>@item.Propietario?.NombreCompleto</td>
         <td>@item.TipoInmueble?.Nombre</td>

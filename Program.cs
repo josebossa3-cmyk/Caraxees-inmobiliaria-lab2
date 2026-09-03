@@ -9,6 +9,7 @@ builder.Services.AddScoped<InquilinoRepository>();
 builder.Services.AddScoped<InmuebleRepository>();
 builder.Services.AddScoped<TipoInmuebleRepository>();
 builder.Services.AddScoped<ReservaRepository>();
+builder.Services.AddScoped<ImagenInmuebleRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

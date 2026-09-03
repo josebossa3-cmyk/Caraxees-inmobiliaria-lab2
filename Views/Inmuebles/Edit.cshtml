@@ -6,7 +6,7 @@
 
 <h1>Editar Inmueble</h1>
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
   <input type="hidden" asp-for="Id" />
   <input type="hidden" asp-for="FechaAlta" />
   <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -63,8 +63,9 @@
   </div>
 
   <div class="mb-3">
-    <label asp-for="ImagenPortada" class="form-label"></label>
-    <input asp-for="ImagenPortada" class="form-control" />
+    <label class="form-label">Imágenes</label>
+    <input type="file" name="archivos" multiple accept="image/*" class="form-control" />
+    <small class="text-muted">Si seleccionas nuevas imagenes, las actuales se eliminan. La primera va ser la portada.</small>
   </div>
 
   <button type="submit" class="btn btn-success">Guardar Cambios</button>

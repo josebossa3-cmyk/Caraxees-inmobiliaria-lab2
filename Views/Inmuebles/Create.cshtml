@@ -6,7 +6,7 @@
 
 <h1>Nuevo Inmueble</h1>
 
-<form asp-action="Create" method="post">
+<form asp-action="Create" method="post" enctype="multipart/form-data">
   <div asp-validation-summary="ModelOnly" class="text-danger"></div>
   <div class="mb-3">
     <label asp-for="PropietarioId" class="form-label"></label>
@@ -61,8 +61,9 @@
   </div>
 
   <div class="mb-3">
-    <label asp-for="ImagenPortada" class="form-label"></label>
-    <input asp-for="ImagenPortada" class="form-control" />
+    <label class="form-label">Imágenes</label>
+    <input type="file" name="archivos" multiple accept="image/*" class="form-control" />
+    <small class="text-muted">La primer imagen va ser portada.</small>
   </div>
 
   <button type="submit" class="btn btn-success">Guardar</button>

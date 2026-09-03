@@ -31,7 +31,7 @@ CREATE TABLE `imagenesinmueble` (
   PRIMARY KEY (`Id`),
   KEY `FK_ImagenesInmueble_Inmuebles` (`InmuebleId`),
   CONSTRAINT `FK_ImagenesInmueble_Inmuebles` FOREIGN KEY (`InmuebleId`) REFERENCES `inmuebles` (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,6 +40,7 @@ CREATE TABLE `imagenesinmueble` (
 
 LOCK TABLES `imagenesinmueble` WRITE;
 /*!40000 ALTER TABLE `imagenesinmueble` DISABLE KEYS */;
+INSERT INTO `imagenesinmueble` VALUES (9,3,'/uploads/inmuebles/8b75ce12-b4db-4359-8513-057bd45557eb.jpg',1,0),(10,4,'/uploads/inmuebles/86eedc79-d485-4e98-8dad-c3be12f73895.jpg',1,0),(11,2,'/uploads/inmuebles/a60df7eb-189a-41e6-adb1-af2975fcee15.jpg',1,0);
 /*!40000 ALTER TABLE `imagenesinmueble` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -67,7 +68,7 @@ CREATE TABLE `inmuebles` (
   KEY `FK_Inmuebles_TiposInmueble` (`TipoInmuebleId`),
   CONSTRAINT `FK_Inmuebles_Propietarios` FOREIGN KEY (`PropietarioId`) REFERENCES `propietarios` (`Id`),
   CONSTRAINT `FK_Inmuebles_TiposInmueble` FOREIGN KEY (`TipoInmuebleId`) REFERENCES `tiposinmueble` (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,6 +77,7 @@ CREATE TABLE `inmuebles` (
 
 LOCK TABLES `inmuebles` WRITE;
 /*!40000 ALTER TABLE `inmuebles` DISABLE KEYS */;
+INSERT INTO `inmuebles` VALUES (2,4,1,'Suipacha 1618',5,60000.00,20.00,1,'-33.664860, -65.454427','/uploads/inmuebles/a60df7eb-189a-41e6-adb1-af2975fcee15.jpg','2026-09-03 15:51:22'),(3,1,2,'Calle Falsa 123',2,230000.00,20.00,1,'-33.675811, -65.461779','/uploads/inmuebles/8b75ce12-b4db-4359-8513-057bd45557eb.jpg','2026-09-03 16:28:58'),(4,1,4,'Calle Falsa 123',7,190000.00,50.00,1,'-33.670547, -65.468645','/uploads/inmuebles/86eedc79-d485-4e98-8dad-c3be12f73895.jpg','2026-09-03 16:31:31');
 /*!40000 ALTER TABLE `inmuebles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,7 +165,7 @@ CREATE TABLE `propietarios` (
   `FechaAlta` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `DNI` (`DNI`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +174,7 @@ CREATE TABLE `propietarios` (
 
 LOCK TABLES `propietarios` WRITE;
 /*!40000 ALTER TABLE `propietarios` DISABLE KEYS */;
-INSERT INTO `propietarios` VALUES (1,'20333444','Juan Carlos Pérez','3515551234','jcperez@mail.com','Av. Colón 123','2026-08-13 17:25:58'),(2,'27444555','María Laura Gómez','3515555678','mlgomez@mail.com','Belgrano 456','2026-08-13 17:25:58');
+INSERT INTO `propietarios` VALUES (1,'20333444','Juan Carlos Pérez','3515551234','jcperez@mail.com','Av. Colón 123','2026-08-13 17:25:58'),(2,'27444555','María Laura Gómez','3515555678','mlgomez@mail.com','Belgrano 456','2026-08-13 17:25:58'),(4,'41298068','Jesus Emanuel Garcia','2657542764','dupre.dev@gmail.com','Suipacha 1618','2026-08-16 22:52:55');
 /*!40000 ALTER TABLE `propietarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -293,4 +295,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-13 17:33:21
+-- Dump completed on 2026-09-03 17:37:01

@@ -12,14 +12,22 @@ namespace inmobiliaria.Controllers
     private readonly PropietarioRepository _propietarioRepo;
     private readonly TipoInmuebleRepository _tipoInmuebleRepo;
 
+    private readonly ImagenInmuebleRepository _imagenInmuebleRepo;
+
+    private readonly IWebHostEnvironment _environment;
+
     public InmueblesController(
       InmuebleRepository repo,
       PropietarioRepository propietarioRepo,
-      TipoInmuebleRepository tipoInmuebleRepo)
+      TipoInmuebleRepository tipoInmuebleRepo,
+      ImagenInmuebleRepository imagenInmuebleRepo,
+      IWebHostEnvironment environment)
     {
       _repo = repo;
       _propietarioRepo = propietarioRepo;
       _tipoInmuebleRepo = tipoInmuebleRepo;
+      _imagenInmuebleRepo = imagenInmuebleRepo;
+      _environment = environment;
     }
 
     // get de inmuebles
@@ -34,6 +42,9 @@ namespace inmobiliaria.Controllers
     {
       var inmueble = await _repo.ObtenerPorIdAsync(id);
       if (inmueble == null) return NotFound();
+
+      var imagenes = await _imagenInmuebleRepo.ObtenerPorInmuebleAsync(id);
+      ViewBag.Imagenes = imagenes;
       return View(inmueble);
     }
 
@@ -47,13 +58,41 @@ namespace inmobiliaria.Controllers
     //post create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(Inmueble inmueble)
+    public async Task<IActionResult> Create(Inmueble inmueble, List<IFormFile> archivos)
     {
 
       if (ModelState.IsValid)
       {
         inmueble.FechaAlta = DateTime.Now;
-        await _repo.CrearAsync(inmueble);
+        await _repo.CrearAsync(inmueble); // el inmueble tiene Id
+
+        if (archivos != null && archivos.Count > 0)
+        {
+          int orden = 0;
+          foreach (var archivo in archivos)
+          {
+            if (archivo.Length > 0)
+            {
+              string url = await GuardarImagenAsync(archivo);
+              bool esPortada = (orden == 0);
+              await _imagenInmuebleRepo.CrearAsync(new ImagenInmueble
+              {
+                InmuebleId = inmueble.Id,
+                Url = url,
+                EsPortada = esPortada,
+                Orden = orden
+              });
+
+              // actualiza el imagenPortada del inmueble
+              if (esPortada)
+              {
+                inmueble.ImagenPortada = url;
+                await _repo.ActualizarAsync(inmueble);
+              }
+              orden++;
+            }
+          }
+        }
         return RedirectToAction(nameof(Index));
       }
       await CargarCombos();
@@ -71,13 +110,45 @@ namespace inmobiliaria.Controllers
     // post edit
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, Inmueble inmueble)
+    public async Task<IActionResult> Edit(int id, Inmueble inmueble, List<IFormFile> archivos)
     {
       if (id != inmueble.Id) return NotFound();
 
       if (ModelState.IsValid)
       {
         await _repo.ActualizarAsync(inmueble);
+
+        //vemos los archivos subidos
+        if (archivos != null && archivos.Count > 0)
+        {
+          //borramos las previas
+          await _imagenInmuebleRepo.EliminarPorInmuebleAsync(inmueble.Id);
+
+          int orden = 0;
+          foreach (var archivo in archivos)
+          {
+            if (archivo.Length > 0)
+            {
+              string url = await GuardarImagenAsync(archivo);
+              bool esPortada = (orden == 0);
+              await _imagenInmuebleRepo.CrearAsync(new ImagenInmueble
+              {
+                InmuebleId = inmueble.Id,
+                Url = url,
+                EsPortada = esPortada,
+                Orden = orden
+              });
+
+              if (esPortada)
+              {
+                inmueble.ImagenPortada = url;
+                await _repo.ActualizarAsync(inmueble);
+              }
+              orden++;
+            }
+          }
+        }
+
         return RedirectToAction(nameof(Index));
       }
       await CargarCombos();
@@ -108,6 +179,24 @@ namespace inmobiliaria.Controllers
 
       ViewBag.Propietario = new SelectList(propietarios, "Id", "NombreCompleto");
       ViewBag.TiposInmueble = new SelectList(tipos, "Id", "Nombre");
+    }
+
+    private async Task<string> GuardarImagenAsync(IFormFile archivo)
+    {
+      string uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "inmuebles");
+      if (!Directory.Exists(uploadsFolder))
+        Directory.CreateDirectory(uploadsFolder);
+
+      // generar nombre unico
+      string nombreUnico = Guid.NewGuid().ToString() + Path.GetExtension(archivo.FileName);
+      string filePath = Path.Combine(uploadsFolder, nombreUnico);
+
+      using (var fileStream = new FileStream(filePath, FileMode.Create))
+      {
+        await archivo.CopyToAsync(fileStream);
+      }
+
+      return $"/uploads/inmuebles/{nombreUnico}";
     }
   }
 }
