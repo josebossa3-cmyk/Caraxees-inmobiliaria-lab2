@@ -21,7 +21,12 @@ namespace inmobiliaria.Models
             using var connection = new MySqlConnection(_database.ConnectionString);
             await connection.OpenAsync();
 
-            var query = @"SELECT Id, InquilinoId, InmuebleId, FechaInicio, FechaFin, FechaFinOriginal, MontoPorDia, PorcentajeReserva, Estado, FechaTerminacion, Multa, ReservaRenovadaDeId, UsuarioCreadorId, UsuarioTerminadorId,FechaCreacion FROM reservas";
+            var query = @"SELECT r.Id, r.InquilinoId, r.InmuebleId, r.FechaInicio, r.FechaFin, r.FechaFinOriginal, r.MontoPorDia, r.PorcentajeReserva, r.Estado, r.FechaTerminacion, r.Multa, r.ReservaRenovadaDeId, r.UsuarioCreadorId, r.UsuarioTerminadorId, r.FechaCreacion,
+                                inq.Id AS InqId, inq.DNI AS InqDNI, inq.NombreCompleto AS InqNombreCompleto, inq.Telefono AS InqTelefono, inq.Email AS InqEmail, inq.Direccion AS InqDireccion, inq.FechaAlta AS InqFechaAlta,
+                                imm.Id AS ImmId, imm.PropietarioId AS ImmPropietarioId, imm.TipoInmuebleId AS ImmTipoInmuebleId, imm.Direccion AS ImmDireccion, imm.Cupo AS ImmCupo, imm.PrecioPorDia AS ImmPrecioPorDia, imm.PorcentajeReserva AS ImmPorcentajeReserva, imm.Estado AS ImmEstado, imm.Coordenadas AS ImmCoordenadas, imm.ImagenPortada AS ImmImagenPortada, imm.FechaAlta AS ImmFechaAlta
+                        FROM reservas r
+                        LEFT JOIN inquilinos inq ON r.InquilinoId = inq.Id
+                        LEFT JOIN inmuebles imm ON r.InmuebleId = imm.Id";
             using var command = new MySqlCommand(query, connection);
             using var reader = await command.ExecuteReaderAsync();
 
@@ -43,7 +48,31 @@ namespace inmobiliaria.Models
                     ReservaRenovadaDeId = reader.IsDBNull(reader.GetOrdinal("ReservaRenovadaDeId")) ? (int?)null : reader.GetInt32("ReservaRenovadaDeId"),
                     UsuarioCreadorId = reader.GetInt32("UsuarioCreadorId"),
                     UsuarioTerminadorId = reader.IsDBNull(reader.GetOrdinal("UsuarioTerminadorId")) ? (int?)null : reader.GetInt32("UsuarioTerminadorId"),
-                    FechaCreacion = reader.GetDateTime("FechaCreacion")
+                    FechaCreacion = reader.GetDateTime("FechaCreacion"),
+                    Inquilino = new Inquilino
+                    {
+                        Id = reader.GetInt32("InqId"),
+                        DNI = reader.GetString("InqDNI"),
+                        NombreCompleto = reader.GetString("InqNombreCompleto"),
+                        Telefono = reader.IsDBNull(reader.GetOrdinal("InqTelefono")) ? null : reader.GetString("InqTelefono"),
+                        Email = reader.IsDBNull(reader.GetOrdinal("InqEmail")) ? null : reader.GetString("InqEmail"),
+                        Direccion = reader.IsDBNull(reader.GetOrdinal("InqDireccion")) ? null : reader.GetString("InqDireccion"),
+                        FechaAlta = reader.GetDateTime("InqFechaAlta")
+                    },
+                    Inmueble = new Inmueble
+                    {
+                        Id = reader.GetInt32("ImmId"),
+                        PropietarioId = reader.GetInt32("ImmPropietarioId"),
+                        TipoInmuebleId = reader.GetInt32("ImmTipoInmuebleId"),
+                        Direccion = reader.GetString("ImmDireccion"),
+                        Cupo = reader.GetInt32("ImmCupo"),
+                        PrecioPorDia = reader.GetDecimal("ImmPrecioPorDia"),
+                        PorcentajeReserva = reader.GetDecimal("ImmPorcentajeReserva"),
+                        Estado = reader.GetBoolean("ImmEstado"),
+                        Coordenadas = reader.IsDBNull(reader.GetOrdinal("ImmCoordenadas")) ? null : reader.GetString("ImmCoordenadas"),
+                        ImagenPortada = reader.IsDBNull(reader.GetOrdinal("ImmImagenPortada")) ? null : reader.GetString("ImmImagenPortada"),
+                        FechaAlta = reader.GetDateTime("ImmFechaAlta")
+                    }
                 });
             }
 
@@ -52,13 +81,18 @@ namespace inmobiliaria.Models
 
         public async Task<Reserva?> ObtenerPorIdAsync(int id)
         {
-            var reserva = new Reserva();
             using var connection = new MySqlConnection(_database.ConnectionString);
             await connection.OpenAsync();
-            var query = @"SELECT * FROM  reservas WHERE Id = @Id";
+            var query = @"SELECT r.Id, r.InquilinoId, r.InmuebleId, r.FechaInicio, r.FechaFin, r.FechaFinOriginal, r.MontoPorDia, r.PorcentajeReserva, r.Estado, r.FechaTerminacion, r.Multa, r.ReservaRenovadaDeId, r.UsuarioCreadorId, r.UsuarioTerminadorId, r.FechaCreacion,
+                                inq.Id AS InqId, inq.DNI AS InqDNI, inq.NombreCompleto AS InqNombreCompleto, inq.Telefono AS InqTelefono, inq.Email AS InqEmail, inq.Direccion AS InqDireccion, inq.FechaAlta AS InqFechaAlta,
+                                imm.Id AS ImmId, imm.PropietarioId AS ImmPropietarioId, imm.TipoInmuebleId AS ImmTipoInmuebleId, imm.Direccion AS ImmDireccion, imm.Cupo AS ImmCupo, imm.PrecioPorDia AS ImmPrecioPorDia, imm.PorcentajeReserva AS ImmPorcentajeReserva, imm.Estado AS ImmEstado, imm.Coordenadas AS ImmCoordenadas, imm.ImagenPortada AS ImmImagenPortada, imm.FechaAlta AS ImmFechaAlta
+                        FROM reservas r
+                        LEFT JOIN inquilinos inq ON r.InquilinoId = inq.Id
+                        LEFT JOIN inmuebles imm ON r.InmuebleId = imm.Id
+                        WHERE r.Id = @Id";
             using var command = new MySqlCommand(query, connection);
             command.Parameters.AddWithValue("@Id", id);
-            var reader = await command.ExecuteReaderAsync();
+            using var reader = await command.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
                 return new Reserva
@@ -77,7 +111,31 @@ namespace inmobiliaria.Models
                     ReservaRenovadaDeId = reader.IsDBNull(reader.GetOrdinal("ReservaRenovadaDeId")) ? (int?)null : reader.GetInt32("ReservaRenovadaDeId"),
                     UsuarioCreadorId = reader.GetInt32("UsuarioCreadorId"),
                     UsuarioTerminadorId = reader.IsDBNull(reader.GetOrdinal("UsuarioTerminadorId")) ? (int?)null : reader.GetInt32("UsuarioTerminadorId"),
-                    FechaCreacion = reader.GetDateTime("FechaCreacion")
+                    FechaCreacion = reader.GetDateTime("FechaCreacion"),
+                    Inquilino = new Inquilino
+                    {
+                        Id = reader.GetInt32("InqId"),
+                        DNI = reader.GetString("InqDNI"),
+                        NombreCompleto = reader.GetString("InqNombreCompleto"),
+                        Telefono = reader.IsDBNull(reader.GetOrdinal("InqTelefono")) ? null : reader.GetString("InqTelefono"),
+                        Email = reader.IsDBNull(reader.GetOrdinal("InqEmail")) ? null : reader.GetString("InqEmail"),
+                        Direccion = reader.IsDBNull(reader.GetOrdinal("InqDireccion")) ? null : reader.GetString("InqDireccion"),
+                        FechaAlta = reader.GetDateTime("InqFechaAlta")
+                    },
+                    Inmueble = new Inmueble
+                    {
+                        Id = reader.GetInt32("ImmId"),
+                        PropietarioId = reader.GetInt32("ImmPropietarioId"),
+                        TipoInmuebleId = reader.GetInt32("ImmTipoInmuebleId"),
+                        Direccion = reader.GetString("ImmDireccion"),
+                        Cupo = reader.GetInt32("ImmCupo"),
+                        PrecioPorDia = reader.GetDecimal("ImmPrecioPorDia"),
+                        PorcentajeReserva = reader.GetDecimal("ImmPorcentajeReserva"),
+                        Estado = reader.GetBoolean("ImmEstado"),
+                        Coordenadas = reader.IsDBNull(reader.GetOrdinal("ImmCoordenadas")) ? null : reader.GetString("ImmCoordenadas"),
+                        ImagenPortada = reader.IsDBNull(reader.GetOrdinal("ImmImagenPortada")) ? null : reader.GetString("ImmImagenPortada"),
+                        FechaAlta = reader.GetDateTime("ImmFechaAlta")
+                    }
                 };
             }
 

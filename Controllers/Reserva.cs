@@ -260,7 +260,7 @@ namespace inmobiliaria.Controllers
         private async Task CargarCombos()
         {
             ViewBag.Inquilinos = await _inquilinoRepo.ObtenerTodosAsync();
-            ViewBag.Inmuebles = await _inmuebleRepo.ObtenerDisponiblesAsync();
+            ViewBag.Inmuebles = await _inmuebleRepo.ObtenerTodosAsync();
         }
 
         private decimal CalcularMulta(Reserva reserva, DateTime fechaTerminacion)
