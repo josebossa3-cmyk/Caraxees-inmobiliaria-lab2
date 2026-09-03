@@ -22,20 +22,59 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var r in Model)
-    {
-        <tr>
-            <td>@r.Inquilino?.NombreCompleto</td>
-            <td>@r.Inmueble?.Direccion</td>
-            <td>@r.MontoPorDia</td>
-            <td>@r.FechaInicio.ToString("dd/MM/yyyy")</td>
-            <td>@r.FechaFin.ToString("dd/MM/yyyy")</td>
-            <td>@r.Estado</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@r.Id" class="btn btn-sm btn-warning">Editar</a>
-                <a asp-action="Delete" asp-route-id="@r.Id" class="btn btn-sm btn-danger">Eliminar</a>
-            </td>
-        </tr>
-    }
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Inquilino?.NombreCompleto</td>
+                <td>@r.Inmueble?.Direccion</td>
+                <td>@r.MontoPorDia</td>
+                <td>@r.FechaInicio.ToString("dd/MM/yyyy")</td>
+                <td>@r.FechaFin.ToString("dd/MM/yyyy")</td>
+                <td>@r.Estado</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@r.Id" class="btn btn-sm btn-warning">Editar</a>
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                        data-id="@r.Id" data-info="@($"{r.Inquilino?.NombreCompleto} - {r.Inmueble?.Direccion} ({r.FechaInicio:dd/MM/yyyy} al {r.FechaFin:dd/MM/yyyy})")">
+                    Eliminar
+                </button>
+                </td>
+            </tr>
+        }
     </tbody>
 </Table>
+
+<!--  modal para eliminar propietario -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar eliminacion</h5>
+                <button type="button" data-bs-dismiss="modal" class="btn-close" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">Estas seguro de eliminar la Reserva ? </strong>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form asp-action="Delete" id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="reservaId" name="id">
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        //script del modal para eliminar
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var info = button.getAttribute('data-info');
+            document.getElementById('reservaId').value = id;
+            document.getElementById('reservaInfo').textContent = info;
+        })
+    </script>
+}
