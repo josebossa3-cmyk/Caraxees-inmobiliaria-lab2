@@ -50,7 +50,7 @@ namespace inmobiliaria.Models
                         NombreCompleto = reader.GetString("NombreCompleto"),
                         Telefono = reader.IsDBNull(reader.GetOrdinal("Telefono")) ? null : reader.GetString("Telefono"),
                         Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString("Email"),
-                        Direccion = reader.IsDBNull(reader.GetOrdinal("PropietarioDireccion")) ? null : reader.GetString("Direccion"),
+                        Direccion = reader.IsDBNull(reader.GetOrdinal("PropietarioDireccion")) ? null : reader.GetString("PropietarioDireccion"),
                         FechaAlta = reader.GetDateTime("PropFechaAlta")
                     },
                     TipoInmueble = new TipoInmueble
@@ -140,7 +140,7 @@ namespace inmobiliaria.Models
                         NombreCompleto = reader.GetString("NombreCompleto"),
                         Telefono = reader.IsDBNull(reader.GetOrdinal("Telefono")) ? null : reader.GetString("Telefono"),
                         Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString("Email"),
-                        Direccion = reader.IsDBNull(reader.GetOrdinal("Direccion")) ? null : reader.GetString("PropietarioDireccion"),
+                        Direccion = reader.IsDBNull(reader.GetOrdinal("PropietarioDireccion")) ? null : reader.GetString("PropietarioDireccion"),
                         FechaAlta = reader.GetDateTime("PropFechaAlta")
                     },
                     TipoInmueble = new TipoInmueble
@@ -160,7 +160,8 @@ namespace inmobiliaria.Models
 
             var query = @"
             INSERT INTO inmuebles (PropietarioId, TipoInmuebleId, Direccion, Cupo, PrecioPorDia, PorcentajeReserva, Estado, Coordenadas, ImagenPortada, FechaAlta) 
-            VALUES (@PropietarioId, @TipoInmuebleId, @Direccion, @Cupo, @PrecioPorDia, @PorcentajeReserva, @Estado, @Coordenadas, @ImagenPortada, @FechaAlta)";
+            VALUES (@PropietarioId, @TipoInmuebleId, @Direccion, @Cupo, @PrecioPorDia, @PorcentajeReserva, @Estado, @Coordenadas, @ImagenPortada, @FechaAlta);
+            SELECT LAST_INSERT_ID();";
 
             using var command = new MySqlCommand(query, connection);
             command.Parameters.AddWithValue("@PropietarioId", inmueble.PropietarioId);
@@ -174,7 +175,8 @@ namespace inmobiliaria.Models
             command.Parameters.AddWithValue("@ImagenPortada", (object?)inmueble.ImagenPortada ?? DBNull.Value);
             command.Parameters.AddWithValue("@FechaAlta", inmueble.FechaAlta);
 
-            await command.ExecuteNonQueryAsync();
+            var nuevoId = Convert.ToInt32(await command.ExecuteScalarAsync());
+            inmueble.Id = nuevoId;
         }
 
         public async Task ActualizarAsync(Inmueble inmueble)

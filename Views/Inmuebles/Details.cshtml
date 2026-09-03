@@ -6,27 +6,93 @@
 
 <h1>Detalles</h1>
 
-<div>
-  <hr>
-  <dl class="row">
-    <dt>Dirección</dt>
-    <dd>@Model.Direccion</dd>
-    <dt>Propietario</dt>
-    <dd>@Model.Propietario?.NombreCompleto</dd>
-    <dt>Tipo</dt>
-    <dd>@Model.TipoInmueble?.Nombre</dd>
-    <dt>Cupo</dt>
-    <dd>@Model.Cupo</dd>
-    <dt>Precio por dia</dt>
-    <dd>@Model.PrecioPorDia.ToString("C")</dd>
-    <dt>Porcentaje reserva</dt>
-    <dd>@Model.PorcentajeReserva%</dd>
-    <dt>Estado</dt>
-    <dd>@(Model.Estado ? "Disponible" : "Suspendido")</dd>
-  </dl>
+<div class="row">
+  <div class="col-md-6">
+    <dl class="row">
+      <dt class="col-sm-4">Dirección</dt>
+      <dd class="col-sm-8">@Model.Direccion</dd>
+
+      <dt class="col-sm-4">Propietario</dt>
+      <dd class="col-sm-8">@Model.Propietario?.NombreCompleto</dd>
+
+      <dt class="col-sm-4">Tipo</dt>
+      <dd class="col-sm-8">@Model.TipoInmueble?.Nombre</dd>
+
+      <dt class="col-sm-4">Cupo</dt>
+      <dd class="col-sm-8">@Model.Cupo</dd>
+
+      <dt class="col-sm-4">Precio por dia</dt>
+      <dd class="col-sm-8">@Model.PrecioPorDia.ToString("C")</dd>
+
+      <dt class="col-sm-4">Porcentaje reserva</dt>
+      <dd class="col-sm-8">@Model.PorcentajeReserva%</dd>
+
+      <dt class="col-sm-4">Estado</dt>
+      <dd class="col-sm-8">
+        <span class="badge @(Model.Estado ? "bg-success" : "bg-secondary")">
+          @(Model.Estado ? "Disponible" : "Suspendido")
+        </span>
+      </dd>
+    </dl>
+  </div>
+
+  <div class=" col-md-6">
+    <h5>Ubicacion</h5>
+    @if (!string.IsNullOrEmpty(Model.Coordenadas) && Model.Coordenadas.Contains(','))
+    {
+      <div id="map" style="height: 300px;"></div>
+    }
+    else
+    {
+      <p class="text-muted">Sin coordenadas registradas.</p>
+    }
+  </div>
 </div>
 
-<div>
+<hr>
+<h4>Imagenes</h4>
+@if (ViewBag.Imagenes != null && ((List<inmobiliaria.Models.ImagenInmueble>)ViewBag.Imagenes).Count > 0)
+{
+  <div class="row row-cols-2 row-cols-md-4 g-3">
+    @foreach (var img in (List<inmobiliaria.Models.ImagenInmueble>)ViewBag.Imagenes)
+    {
+      <div class="col">
+        <a href="@img.Url" target="_blank">
+          <img src="@img.Url" class="img-fluid rounded shadow-sm" alt="Imagen de inmueble">
+        </a>
+        @if (img.EsPortada)
+        {
+          <span class="badge bg-primary mt-1">Portada</span>
+        }
+      </div>
+    }
+  </div>
+}
+else
+{
+  <p class="text-muted">No hay imagenes cargadas</p>
+}
+
+<div class="mt-4">
   <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
   <a asp-action="Index" class="btn btn-secondary">Volver</a>
 </div>
+
+@section Scripts {
+  @if (!string.IsNullOrEmpty(Model.Coordenadas) && Model.Coordenadas.Contains(','))
+  {
+    <script>
+      var coords = "@Model.Coordenadas".split(',');
+      var lat = parseFloat(coords[0].trim());
+      var lon = parseFloat(coords[1].trim());
+
+      var map = L.map('map').setView([lat, lon], 15);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      L.marker([lat, lon]).addTo(map);
+    </script>
+  }
+}
