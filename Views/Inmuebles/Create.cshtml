@@ -54,8 +54,10 @@
   </div>
 
   <div class="mb-3">
-    <label asp-for="Coordenadas" class="form-label"></label>
-    <input asp-for="Coordenadas" class="form-control">
+    <label asp-for="Coordenadas" class="form-label">Coordenadas</label>
+    <input asp-for="Coordenadas" id="coordenadas" class="form-control" readonly
+           placeholder="Hacé click en el mapa para seleccionar">
+    <div id="map" style="height: 300px; margin-top: 10px;"></div>
   </div>
 
   <div class="mb-3">
@@ -66,3 +68,44 @@
   <button type="submit" class="btn btn-success">Guardar</button>
   <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>
+
+@section Scripts {
+  <script>
+    // son las corrdenadas de villa mercedes
+    var lat = -33.666;
+    var lon = -65.466;
+    var marker;
+
+    var map = L.map('map').setView([lat, lon], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
+
+    // esto es por si hay coordenadas de antes (en edicion), centrar y poner el marcador
+
+    var coordInput = document.getElementById('coordenadas');
+    var coordValue = coordInput.value.trim();
+    if (coordValue && coordValue.includes(',')) {
+      var parts = coordValue.split(',');
+      lat = parseFloat(parts[0].trim());
+      lon = parseFloat(parts[1].trim());
+      map.setView([lat, lon], 15);
+      marker = L.marker([lat, lon], { draggable: true }).addTo(map);
+    }
+
+    // cuando hace click en el mapa, coloca o actualiza el marker
+
+    map.on('click', function (e) {
+      if (marker) {
+        marker.setLatLng(e.latlng);
+      } else {
+        marker = L.marker(e.latlng, { draggable: true }).addTo(map);
+      }
+      updateCoordInput(e.latlng);
+    });
+
+    // arrastra el marcador y actualiza el input
+    function updateCoordInput(latlng) {
+      document.getElementById('coordenadas').value = latlng.lat.toFixed(6) + ', ' + latlng.lng.toFixed(6);
+    }
+  </script>
+}
