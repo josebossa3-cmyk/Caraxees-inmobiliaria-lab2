@@ -1,0 +1,130 @@
+@using System.Data.Common
+@model Reserva
+
+@{
+  ViewData["Title"] = "Detalles de Reserva";
+}
+
+<h1>Detalles de la Reserva</h1>
+
+<div class="row">
+  <div class="col-md-6">
+    <h5>Informacion general</h5>
+    <dl class="row">
+      <dt class="col-sm-5">Nro de reserva</dt>
+      <dd class="col-sm-7">@Model.Id</dd>
+
+      <dt class="col-sm-5">Estado</dt>
+      <dd class="col-sm-7">
+        @{
+          var badgeClass = Model.Estado switch
+          {
+            "Vigente" => "bg-success",
+            "Finalizada" => "bg-secondary",
+            "TerminadaAnticipadamente" => "bg-warning text-dark",
+            _ => "bg-dark"
+          };
+        }
+        <span class="badge @badgeClass fs-6">@Model.Estado</span>
+      </dd>
+
+      <dt class="col-sm-5">Monto por día</dt>
+      <dd class="col-sm-7">@Model.MontoPorDia.ToString("C")</dd>
+
+      <dt class="col-sm-5">Porcentaje de reserva</dt>
+      <dd class="col-sm-7">@Model.PorcentajeReserva %</dd>
+
+      <dt class="col-sm-5">Fecha de inicio</dt>
+      <dd class="col-sm-7">@Model.FechaInicio.ToString("dd/MM/yyyy")</dd>
+
+      <dt class="col-sm-5">Fecha de fin (vigente)</dt>
+      <dd class="col-sm-7">@Model.FechaFin.ToString("dd/MM/yyyy")</dd>
+
+      <dt class="col-sm-5">Fecha de fin original</dt>
+      <dd class="col-sm-7">@Model.FechaFinOriginal.ToString("dd/MM/yyyy")</dd>
+
+      @if (Model.FechaTerminacion.HasValue)
+      {
+        <dt class="col-sm-5">Fecha de terminación</dt>
+        <dd class="col-sm-7 text-danger">@Model.FechaTerminacion.Value.ToString("dd/MM/yyyy")</dd>
+      }
+
+      <dt class="col-sm-5">Fecha de creación</dt>
+      <dd class="col-sm-7">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</dd>
+    </dl>
+  </div>
+
+  <div class="col-md-6">
+    <h5>Inquilino</h5>
+    <dl class="row">
+      <dt class="col-sm-4">Nombre</dt>
+      <dd class="col-sm-8">@Model.Inquilino?.NombreCompleto</dd>
+      <dt class="col-sm-4">DNI</dt>
+      <dd class="col-sm-8">@Model.Inquilino?.DNI</dd>
+      <dt class="col-sm-4">Telefono</dt>
+      <dd class="col-sm-8">@Model.Inquilino?.Telefono</dd>
+    </dl>
+
+    <h5>Inmueble</h5>
+    @if (!string.IsNullOrEmpty(Model.Inmueble?.ImagenPortada))
+    {
+      <img src="@Model.Inmueble.ImagenPortada" alt="Inmueble" class="img-thumbnail mb-2" style="max-height: 150px;" />
+    }
+    <dl class="row">
+      <dt class="col-sm-4">Dirección</dt>
+      <dd class="col-sm-8">@Model.Inmueble?.Direccion</dd>
+    </dl>
+  </div>
+</div>
+
+@if (Model.Multa.HasValue && Model.Multa > 0)
+{
+  <hr />
+  <h5 class="text-danger">Terminación anticipada</h5>
+
+  
+  var diasTotales = (Model.FechaFinOriginal - Model.FechaInicio).Days;
+  var fechaTerm = Model.FechaTerminacion ?? DateTime.Now;
+  var diasTranscurridos = (fechaTerm - Model.FechaInicio).Days;
+  var diasRestantes = (Model.FechaFinOriginal - fechaTerm).Days;
+  if (diasRestantes < 0) diasRestantes = 0;
+  var porcentajeMulta = diasTranscurridos < diasTotales / 2.0 ? 50 : 25;
+  var saldoRestante = diasRestantes * Model.MontoPorDia;
+
+  
+  <dl class="row">
+    <dt class="col-sm-4">Dias totales originales</dt>
+    <dd class="col-sm-8">@diasTotales</dd>
+
+    <dt class="col-sm-4">Dias transcurridos</dt>
+    <dd class="col-sm-8">@diasTranscurridos</dd>
+
+    <dt class="col-sm-4">Dias restantes</dt>
+    <dd class="col-sm-8">@diasRestantes</dd>
+
+    <dt class="col-sm-4">Saldo restante</dt>
+    <dd class="col-sm-8">@saldoRestante.ToString("C")</dd>
+
+    <dt class="col-sm-4">Porcentaje aplicado</dt>
+    <dd class="col-sm-8">@porcentajeMulta %</dd>
+
+    <dt class="col-sm-4"><strong>Multa total</strong></dt>
+    <dd class="col-sm-8"><strong class="text-danger">@Model.Multa.Value.ToString("C")</strong></dd>
+  </dl>
+}
+
+<hr />
+<h5>Auditoria</h5>
+<dl class="row">
+  <dt class="col-sm-4">Usuario creador</dt>
+  <dd class="col-sm-8">@Model.UsuarioCreadorId</dd>
+  @if (Model.UsuarioTerminadorId.HasValue)
+  {
+    <dt class="col-sm-4">Usuario terminador</dt>
+    <dd class="col-sm-8">@Model.UsuarioTerminadorId</dd>
+  }
+</dl>
+
+<div class="mt-4">
+  <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</div>

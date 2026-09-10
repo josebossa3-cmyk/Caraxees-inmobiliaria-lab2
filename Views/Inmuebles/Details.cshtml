@@ -55,14 +55,11 @@
 {
   var imagenes = (List<inmobiliaria.Models.ImagenInmueble>)ViewBag.Imagenes;
     <div id="carouselInmueble" class="carousel slide" data-bs-ride="carousel">
-      //ponemos los indicadores
       <ol class="carousel-indicators">
         @for(int i = 0; i < imagenes.Count; i++){
           <li data-bs-target="#carouselInmueble" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></li>
         }
       </ol>
-
-      //contenido-imagenes
       <div class="carousel-inner">
         @for(int i = 0; i < imagenes.Count; i++){
           <div class="carousel-item @(i == 0 ? "active" : "")">
@@ -75,8 +72,6 @@
           </div>
         }
       </div>
-
-      //controles
       @if(imagenes.Count > 1){
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselInmueble" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>

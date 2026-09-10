@@ -12,20 +12,26 @@
   <div class="mb-3">
     <label asp-for="InquilinoId" class="form-label">Inquilino</label>
     <select asp-for="InquilinoId" asp-items="@(new SelectList(ViewBag.Inquilinos, "Id", "NombreCompleto"))"
-            class="form-select"></select>
+            class="form-select">
+      <option value="">Seleccione un Inquilino</option>
+    </select>
     <span asp-validation-for="InquilinoId" class="text-danger"></span>
   </div>
 
   <div class="mb-3">
     <label>Inmueble</label>
     <select asp-for="InmuebleId" asp-items="@(new SelectList(ViewBag.Inmuebles, "Id", "Direccion"))"
-            class="form-select"></select>
+            class="form-select">
+      <option value="">Seleccione un Inmueble</option>
+    </select>
     <span asp-validation-for="InmuebleId" class="text-danger"></span>
   </div>
 
   <div class="mb-3">
     <label asp-for="MontoPorDia" class="form-label">Monto por día</label>
-    <input asp-for="MontoPorDia" class="form-control" />
+    <input asp-for="MontoPorDia" class="form-control" id="MontoPorDia" readonly />
+    <small class="text-muted">Se completa automaticamente según el inmueble seleccionado</small>
+
     <span asp-validation-for="MontoPorDia" class="text-danger"></span>
   </div>
 
@@ -43,10 +49,36 @@
 
   <div class="mb-3">
     <label asp-for="PorcentajeReserva" class="form-label">Porcentaje de reserva</label>
-    <input asp-for="PorcentajeReserva" class="form-control" />
+    <input asp-for="PorcentajeReserva" class="form-control" id="PorcentajeReserva" readonly />
+    <small class="text-muted">Se completa automaticamente según el inmueble seleccionado</small>
+
     <span asp-validation-for="PorcentajeReserva" class="text-danger"></span>
   </div>
 
   <button type="submit" class="btn btn-success">Guardar</button>
   <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>
+
+@section Scripts {
+  <script>
+    document.getElementById('InmuebleId').addEventListener('change', function () {
+      var inmuebleId = this.value;
+      var montoInput = document.getElementById('MontoPorDia');
+      var porcentajeInput = document.getElementById('PorcentajeReserva');
+
+      if (!inmuebleId) {
+        montoInput.value = '';
+        porcentajeInput.value = '';
+        return;
+      }
+
+      fetch('/Reserva/ObtenerDatosInmueble/' + inmuebleId)
+        .then(response => response.json())
+        .then(data => {
+          montoInput.value = data.precioPorDia;
+          porcentajeInput.value = data.porcentajeReserva;
+        })
+        .catch(error => console.error('Error al obtener datos del inmueble:', error));
+    });
+  </script>
+}
