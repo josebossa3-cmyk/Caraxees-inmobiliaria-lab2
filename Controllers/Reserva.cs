@@ -34,6 +34,13 @@ namespace inmobiliaria.Controllers
             return View(reserva);
         }
 
+        public async Task<IActionResult> DetailsPartial(int id)
+        {
+            var reserva = await _repo.ObtenerPorIdAsync(id);
+            if (reserva == null) return NotFound();
+            return PartialView("Detalles", reserva);
+        }
+
         public async Task<IActionResult> Create()
         {
             await CargarCombos();
@@ -85,6 +92,15 @@ namespace inmobiliaria.Controllers
 
             await CargarCombos();
             return View(reserva);
+        }
+
+        public async Task<IActionResult> EditPartial(int id)
+        {
+            var reserva = await _repo.ObtenerPorIdAsync(id);
+            if (reserva == null) return NotFound();
+
+            await CargarCombos();
+            return PartialView("Editar", reserva);
         }
 
 
@@ -179,6 +195,29 @@ namespace inmobiliaria.Controllers
 
             await CargarCombos();
             return View(nueva);
+        }
+
+        public async Task<IActionResult> RenovarPartial(int id)
+        {
+            var original = await _repo.ObtenerPorIdAsync(id);
+            if (original == null) return NotFound();
+
+            var dias = (original.FechaFin - original.FechaInicio).Days;
+            if (dias < 1) dias = 1;
+
+            var nueva = new Reserva
+            {
+                InquilinoId = original.InquilinoId,
+                InmuebleId = original.InmuebleId,
+                MontoPorDia = original.MontoPorDia,
+                PorcentajeReserva = original.PorcentajeReserva,
+                FechaInicio = original.FechaFin,
+                FechaFin = original.FechaFin.AddDays(dias),
+                ReservaRenovadaDeId = original.Id
+            };
+
+            await CargarCombos();
+            return PartialView("_Renovar", nueva);
         }
 
 

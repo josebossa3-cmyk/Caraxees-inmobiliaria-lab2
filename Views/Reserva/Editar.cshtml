@@ -1,12 +1,7 @@
 @model Reserva
 
-@{
-    ViewData["Title"] = "Editar Reserva";
-}
-
-<h2>Editar reserva</h2>
-
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="editForm">
+    @Html.AntiForgeryToken()
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="FechaCreacion" />
     <input type="hidden" asp-for="FechaFinOriginal" />
@@ -20,14 +15,14 @@
 
     <div class="mb-3">
         <label asp-for="InquilinoId" class="form-label">Inquilino</label>
-        <select asp-for="InquilinoId" asp-items="@(new SelectList(ViewBag.Inquilinos, "Id", "NombreCompleto"))"
+        <select asp-for="InquilinoId" asp-items="@(new SelectList(ViewBag.Inquilinos, "Id", "NombreCompleto", Model.InquilinoId))"
                 class="form-select"></select>
         <span asp-validation-for="InquilinoId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="InmuebleId" class="form-label">Inmueble</label>
-        <select asp-for="InmuebleId" asp-items="@(new SelectList(ViewBag.Inmuebles, "Id", "Direccion"))"
+        <select asp-for="InmuebleId" asp-items="@(new SelectList(ViewBag.Inmuebles, "Id", "Direccion", Model.InmuebleId))"
                 class="form-select"></select>
         <span asp-validation-for="InmuebleId" class="text-danger"></span>
     </div>
@@ -56,24 +51,8 @@
         <span asp-validation-for="PorcentajeReserva" class="text-danger"></span>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Estado</label>
-        <div>
-            @{
-                var badgeClass = Model.Estado switch
-                {
-                    "Vigente" => "bg-success",
-                    "Finalizada" => "bg-secondary",
-                    "TerminadaAnticipadamente" => "bg-warning text-dark",
-                    _ => "bg-dark"
-                };
-            }
-            <span class="badge @badgeClass fs-6">@Model.Estado</span>
-        </div>
-        <input type="hidden" asp-for="Estado" />
-        <small class="text-muted">El estado se modifica desde "Terminar" o "Renovar" en el listado</small>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Guardar cambios</button>
     </div>
-
-    <button type="submit" class="btn btn-success">Guardar cambios</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>

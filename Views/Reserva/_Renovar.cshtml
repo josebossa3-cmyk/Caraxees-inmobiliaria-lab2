@@ -1,0 +1,56 @@
+@model Reserva
+
+<form asp-action="Renovar" asp-route-id="@Model.ReservaRenovadaDeId" method="post" id="renovarForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ReservaRenovadaDeId">
+
+    <div class="alert alert-info py-2">
+        <strong>Reserva Original N° @Model.ReservaRenovadaDeId</strong><br />
+        Se va a crear una nueva reserva con el mismo inquilino e inmueble.
+    </div>
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="InquilinoId" class="form-label">Inquilino</label>
+        <select asp-for="InquilinoId" asp-items="@(new SelectList(ViewBag.Inquilinos, "Id", "NombreCompleto", Model.InquilinoId))"
+                class="form-select"></select>
+        <span asp-validation-for="InquilinoId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="InmuebleId" class="form-label">Inmueble</label>
+        <select asp-for="InmuebleId" asp-items="@(new SelectList(ViewBag.Inmuebles, "Id", "Direccion", Model.InmuebleId))"
+                class="form-select"></select>
+        <span asp-validation-for="InmuebleId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="MontoPorDia" class="form-label">Monto por día</label>
+        <input asp-for="MontoPorDia" class="form-control" />
+        <span asp-validation-for="MontoPorDia" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FechaInicio" class="form-label">Nueva fecha de inicio</label>
+        <input type="date" asp-for="FechaInicio" class="form-control" />
+        <span asp-validation-for="FechaInicio" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FechaFin" class="form-label">Nueva fecha de fin</label>
+        <input type="date" asp-for="FechaFin" class="form-control" />
+        <span asp-validation-for="FechaFin" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PorcentajeReserva" class="form-label">Porcentaje de reserva</label>
+        <input type="number" asp-for="PorcentajeReserva" class="form-control" step="0.01" min="0" max="100" />
+        <span asp-validation-for="PorcentajeReserva" class="text-danger"></span>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Confirmar Renovación</button>
+    </div>
+</form>

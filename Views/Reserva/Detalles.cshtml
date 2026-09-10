@@ -1,0 +1,57 @@
+@model Reserva
+
+<div class="row">
+    <div class="col-12">
+        <dl class="row">
+            <dt class="col-sm-5">Nro de reserva</dt>
+            <dd class="col-sm-7">@Model.Id</dd>
+
+            <dt class="col-sm-5">Estado</dt>
+            <dd class="col-sm-7">
+                @{
+                    var badgeClass = Model.Estado switch
+                    {
+                        "Vigente" => "bg-success",
+                        "Finalizada" => "bg-secondary",
+                        "TerminadaAnticipadamente" => "bg-warning text-dark",
+                        _ => "bg-dark"
+                    };
+                }
+                <span class="badge @badgeClass">@Model.Estado</span>
+            </dd>
+
+            <dt class="col-sm-5">Inquilino</dt>
+            <dd class="col-sm-7">@Model.Inquilino?.NombreCompleto</dd>
+
+            <dt class="col-sm-5">Inmueble</dt>
+            <dd class="col-sm-7">@Model.Inmueble?.Direccion</dd>
+
+            <dt class="col-sm-5">Monto por día</dt>
+            <dd class="col-sm-7">@Model.MontoPorDia.ToString("C")</dd>
+
+            <dt class="col-sm-5">Porcentaje de reserva</dt>
+            <dd class="col-sm-7">@Model.PorcentajeReserva %</dd>
+
+            <dt class="col-sm-5">Fecha de inicio</dt>
+            <dd class="col-sm-7">@Model.FechaInicio.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-5">Fecha de fin</dt>
+            <dd class="col-sm-7">@Model.FechaFin.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-5">Fecha de fin original</dt>
+            <dd class="col-sm-7">@Model.FechaFinOriginal.ToString("dd/MM/yyyy")</dd>
+
+            @if (Model.FechaTerminacion.HasValue)
+            {
+                <dt class="col-sm-5">Fecha de terminación</dt>
+                <dd class="col-sm-7 text-danger">@Model.FechaTerminacion.Value.ToString("dd/MM/yyyy")</dd>
+            }
+
+            <dt class="col-sm-5">Fecha de creación</dt>
+            <dd class="col-sm-7">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</dd>
+        </dl>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+</div>
