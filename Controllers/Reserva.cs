@@ -215,7 +215,7 @@ namespace inmobiliaria.Controllers
             await _repo.CrearAsync(reserva);
 
             var ahora = DateTime.Now;
-            await _repo.CambiarEstadoAsync(original.Id, "Terminada", multa: null, fechaFin: ahora, UsuarioActualId, ahora);
+            await _repo.CambiarEstadoAsync(original.Id, "Finalizada", multa: null, fechaFin: null, UsuarioActualId, ahora);
 
             TempData["Mensaje"] = "Reserva renovada correctamente.";
             return RedirectToAction(nameof(Index));
