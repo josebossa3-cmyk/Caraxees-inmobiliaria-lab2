@@ -1,4 +1,7 @@
+using System.Net;
 using inmobiliaria.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,12 @@ builder.Services.AddScoped<InmuebleRepository>();
 builder.Services.AddScoped<TipoInmuebleRepository>();
 builder.Services.AddScoped<ReservaRepository>();
 builder.Services.AddScoped<ImagenInmuebleRepository>();
+builder.Services.AddScoped<UsuarioRepository>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
+    options.LoginPath = "/Usuarios/Login";
+    options.AccessDeniedPath = "/Usuarios/AccesoDenegado";
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -27,6 +36,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
