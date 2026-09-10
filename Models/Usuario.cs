@@ -20,10 +20,7 @@ namespace inmobiliaria.Models
 
         [Required(ErrorMessage = "El nombre es obligatorio")]
         [StringLength(50)]
-        public string Nombre { get; set; } = "";
-
-        [Required(ErrorMessage = "El apellidos es obligatorio")]
-        public string Apellido { get; set; } = "";
+        public string NombreCompleto { get; set; } = "";
 
         public string? Avatar { get; set; }
 
