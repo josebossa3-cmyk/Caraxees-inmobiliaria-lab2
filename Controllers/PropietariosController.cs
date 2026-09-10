@@ -14,10 +14,11 @@ namespace inmobiliaria.Controllers
     }
 
     //get propietarios
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? searchString, int page = 1)
     {
-      var propietarios = await _repo.ObtenerTodosAsync();
-      return View(propietarios);
+      const int pageSize = 10;
+      var resultado = await _repo.ObtenerPaginadosAsync(searchString, page, pageSize);
+      return View(resultado);
     }
 
     //get propietarios/details/5 <- id

@@ -18,10 +18,11 @@ namespace inmobiliaria.Controllers
             _repo = repo;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchString, int page = 1)
         {
-            var inquilinos = await _repo.ObtenerTodosAsync();
-            return View(inquilinos);
+            const int pageSize = 10;
+            var resultado = await _repo.ObtenerPaginadosAsync(searchString, page, pageSize);
+            return View(resultado);
         }
 
         //get inquilinos/details/5 <- id

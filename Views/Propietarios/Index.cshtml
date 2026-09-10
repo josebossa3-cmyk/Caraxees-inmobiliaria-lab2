@@ -1,4 +1,4 @@
-@model IEnumerable<inmobiliaria.Models.Propietario>
+@model inmobiliaria.Models.PaginadoResult<inmobiliaria.Models.Propietario>
 
 @{
   ViewData["Title"] = "Propietarios";
@@ -10,7 +10,19 @@
   <a asp-action="Create" class="btn btn-primary">Nuevo Propietario</a>
 </p>
 
-<table class="table">
+<form asp-action="Index" method="get" class="mb-3">
+  <div class="input-group">
+    <input type="text" name="searchString" value="@Model.Busqueda" class="form-control"
+           placeholder="- Buscar por DNI, nombre o email - " />
+    <button type="submit" class="btn btn-outline-secondary">Buscar</button>
+    @if (!string.IsNullOrEmpty(Model.Busqueda))
+    {
+      <a asp-action="Index" class="btn btn-outline-danger">Limpiar</a>
+    }
+  </div>
+</form>
+
+<table class="table table-striped">
   <thead>
     <tr>
       <th>DNI</th>
@@ -21,7 +33,7 @@
     </tr>
   </thead>
   <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in Model.Items)
     {
       <tr>
         <td>@item.DNI</td>
@@ -29,7 +41,8 @@
         <td>@item.Telefono</td>
         <td>@item.Email</td>
         <td>
-          <button type="button" class="btn btn-primary btn-sm" onclick="loadEditModal(@item.Id)">Editar</button>
+          <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Detalles</a>
+          <button type="button" class="btn btn-sm btn-warning" onclick="loadEditModal(@item.Id)">Editar</button>
           <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
                   data-id="@item.Id" data-nombre="@item.NombreCompleto">Eliminar</button>
         </td>
@@ -37,6 +50,36 @@
     }
   </tbody>
 </table>
+
+@if (Model.TotalPaginas > 1)
+{
+  <nav>
+    <ul class="pagination">
+      <li class="page-item @(Model.PaginaActual == 1 ? "disabled" : "")">
+        <a class="page-link" asp-action="Index" 
+        asp-route-page="@(Model.PaginaActual  - 1)" 
+        asp-route-searchString="@Model.Busqueda" >Anterior</a>
+      </li>
+
+      @for(int i = 1; i <= Model.TotalPaginas; i++)
+      {
+        <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+          <a class="page-link" asp-action="Index"
+          asp-route-page="@i"
+          asp-route-searchString="@Model.Busqueda">@i</a>
+        </li>
+      }
+
+      <li class="page-item @(Model.PaginaActual == Model.TotalPaginas ? "disabled" : "")">
+        <a class="page-link" asp-action="Index"
+          asp-route-page="@(Model.PaginaActual + 1)"
+          asp-route-searchString="@Model.Busqueda">Siguiente</a>
+      </li>
+    </ul>
+  </nav>
+}
+
+<p class="text-muted">Mostrando @Model.Items.Count de @Model.TotalRegistros registros.</p>
 
 <!--  modal para edicion -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">

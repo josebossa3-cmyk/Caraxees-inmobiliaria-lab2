@@ -1,0 +1,36 @@
+@model inmobiliaria.Models.Propietario
+
+@{
+  ViewData["Title"] = "Detalles de Propietario";
+}
+
+<h1>Detalles del Propietario</h1>
+
+<div>
+  <hr>
+  <dl class="row">
+
+    <dt class="col-sm-3">DNI</dt>
+    <dd class="col-sm-9">@Model.DNI</dd>
+
+    <dt class="col-sm-3">Nombre completo</dt>
+    <dd class="col-sm-9">@Model.NombreCompleto</dd>
+
+    <dt class="col-sm-3">Teléfono</dt>
+    <dd class="col-sm-9">@Model.Telefono</dd>
+
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+
+    <dt class="col-sm-3">Dirección</dt>
+    <dd class="col-sm-9">@Model.Direccion</dd>
+
+    <dt class="col-sm-3">Fecha de alta</dt>
+    <dd class="col-sm-9">@Model.FechaAlta.ToString("dd/MM/yyyy")</dd>
+  </dl>
+</div>
+
+<div>
+  <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+  <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</div>
