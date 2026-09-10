@@ -4,94 +4,160 @@
   ViewData["Title"] = "Propietarios";
 }
 
-<h1>Propietarios</h1>
-
-<p>
-  <a asp-action="Create" class="btn btn-primary">Nuevo Propietario</a>
-</p>
-
-<form asp-action="Index" method="get" class="mb-3">
-  <div class="input-group">
-    <input type="text" name="searchString" value="@Model.Busqueda" class="form-control"
-           placeholder="- Buscar por DNI, nombre o email - " />
-    <button type="submit" class="btn btn-outline-secondary">Buscar</button>
-    @if (!string.IsNullOrEmpty(Model.Busqueda))
-    {
-      <a asp-action="Index" class="btn btn-outline-danger">Limpiar</a>
-    }
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1 mt-2"><i class="bi bi-person-standing text-primary"></i> Propietarios</h1>
+    <p class="text-muted mb-0">Gestión de propietarios registrados en el sistema</p>
   </div>
-</form>
+  <a asp-action="Create" class="btn btn-primary">
+    <i class="bi bi-plus-circle"></i> Nuevo Propietario
+  </a>
+</div>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>DNI</th>
-      <th>Nombre Completo</th>
-      <th>Teléfono</th>
-      <th>Email</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (var item in Model.Items)
-    {
-      <tr>
-        <td>@item.DNI</td>
-        <td>@item.NombreCompleto</td>
-        <td>@item.Telefono</td>
-        <td>@item.Email</td>
-        <td>
-          <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Detalles</a>
-          <button type="button" class="btn btn-sm btn-warning" onclick="loadEditModal(@item.Id)">Editar</button>
-          <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                  data-id="@item.Id" data-nombre="@item.NombreCompleto">Eliminar</button>
-        </td>
-      </tr>
-    }
-  </tbody>
-</table>
 
-@if (Model.TotalPaginas > 1)
-{
-  <nav>
-    <ul class="pagination">
-      <li class="page-item @(Model.PaginaActual == 1 ? "disabled" : "")">
-        <a class="page-link" asp-action="Index" 
-        asp-route-page="@(Model.PaginaActual  - 1)" 
-        asp-route-searchString="@Model.Busqueda" >Anterior</a>
-      </li>
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <form asp-action="Index" method="get" class="mb-3">
+      <div class="input-group">
+        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+        <input type="text" name="searchString" value="@Model.Busqueda" class="form-control border-start-0"
+               placeholder="Buscar por DNI, nombre o email..." />
+        <button type="submit" class="btn btn-outline-primary">Buscar</button>
+        @if (!string.IsNullOrEmpty(Model.Busqueda))
+        {
+          <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-x-circle"></i> Limpiar
+          </a>
+        }
+      </div>
+    </form>
+  </div>
+</div>
 
-      @for(int i = 1; i <= Model.TotalPaginas; i++)
-      {
-        <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
-          <a class="page-link" asp-action="Index"
-          asp-route-page="@i"
-          asp-route-searchString="@Model.Busqueda">@i</a>
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>DNI</th>
+            <th>Nombre Completo</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!Model.Items.Any())
+          {
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">
+                <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                No se encontraron propietarios.
+              </td>
+            </tr>
+          }
+          else
+          {
+            @foreach (var item in Model.Items)
+            {
+              <tr>
+                <td class="fw-semibold">@item.DNI</td>
+                <td>@item.NombreCompleto</td>
+                <td>
+                  @if (!string.IsNullOrEmpty(item.Telefono))
+                  {
+                    <i class="bi bi-telephone text-muted me-1"></i>
+                    @item.Telefono
+                  }
+                  else
+                  {
+                    <span class="text-muted">-</span>
+                  }
+                </td>
+                <td>
+                  @if (!string.IsNullOrEmpty(item.Email))
+                  {
+                    <i class="bi bi-envelope text-muted me-1"></i>
+                    @item.Email
+                  }
+                  else
+                  {
+                    <span class="text-muted">-</span>
+                  }
+                </td>
+                <td class="text-end">
+                  <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Ver detalles">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  <button type="button" class="btn btn-sm btn-warning" title="Editar" onclick="loadEditModal(@item.Id)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-danger" title="Eliminar" data-bs-toggle="modal"
+                          data-bs-target="#deleteModal" data-id="@item.Id" data-nombre="@item.NombreCompleto">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  @if (Model.TotalPaginas > 1)
+  {
+    <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+      <small class="text-muted">
+        Mostrando @Model.Items.Count de @Model.TotalRegistros registros
+      </small>
+    </div>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item @(Model.PaginaActual == 1 ? "disabled" : "")">
+          <a class="page-link" asp-action="Index" asp-route-page="@(Model.PaginaActual - 1)"
+             asp-route-searchString="@Model.Busqueda">
+            <i class="bi bi-chevron-left"></i>
+          </a>
         </li>
-      }
 
-      <li class="page-item @(Model.PaginaActual == Model.TotalPaginas ? "disabled" : "")">
-        <a class="page-link" asp-action="Index"
-          asp-route-page="@(Model.PaginaActual + 1)"
-          asp-route-searchString="@Model.Busqueda">Siguiente</a>
-      </li>
-    </ul>
-  </nav>
-}
+        @for (int i = 1; i <= Model.TotalPaginas; i++)
+        {
+          <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+            <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@Model.Busqueda">@i</a>
+          </li>
+        }
 
-<p class="text-muted">Mostrando @Model.Items.Count de @Model.TotalRegistros registros.</p>
+        <li class="page-item @(Model.PaginaActual == Model.TotalPaginas ? "disabled" : "")">
+          <a class="page-link" asp-action="Index" asp-route-page="@(Model.PaginaActual + 1)"
+             asp-route-searchString="@Model.Busqueda">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  }
+  else
+  {
+    <div class="card-footer bg-white">
+      <small class="text-muted">Mostrando @Model.Items.Count de @Model.TotalRegistros registrados</small>
+    </div>
+  }
+</div>
 
 <!--  modal para edicion -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editModalLabel">Editar Propietario</h5>
+      <div class="modal-header bg-warning-subtle">
+        <h5 class="modal-title" id="editModalLabel">
+          <i class="bi bi-pencil-square"> Editar Propietario</i>
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      <div class="modal-body" id="editModalBody">
-
-      </div>
+      <div class="modal-body" id="editModalBody"></div>
     </div>
   </div>
 </div>
@@ -100,17 +166,27 @@
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">Confirmar eliminacion</h5>
+      <div class="modal-header bg-danger-subtle">
+        <h5 class="modal-title" id="deleteModalLabel">
+          <i class="bi bi-exclamation-triangle"></i> Confirmar eliminacion
+        </h5>
         <button type="button" data-bs-dismiss="modal" class="btn-close" aria-label="Cerrar"></button>
       </div>
-      <div class="modal-body">Estas seguro de eliminar al Propietario: <strong id="propietarioNombre"></strong>?</div>
+      <div class="modal-body">Estas seguro de eliminar al Propietario
+        <strong id="propietarioNombre"></strong>?
+        <br>
+        <small class="text-muted">Esta acción no se puede deshacer.</small>
+      </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <form asp-action="Delete" id="deleteForm" method="post">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle"></i> Cancelar
+        </button>
+        <form asp-action="Delete" id="deleteForm" method="post" class="d-inline">
           @Html.AntiForgeryToken()
           <input type="hidden" id="propietarioId" name="id">
-          <button type="submit" class="btn btn-danger">Eliminar</button>
+          <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Eliminar
+          </button>
         </form>
       </div>
     </div>
@@ -127,7 +203,7 @@
       var nombre = button.getAttribute('data-nombre');
       document.getElementById('propietarioId').value = id;
       document.getElementById('propietarioNombre').textContent = nombre;
-    })
+    });
 
     //script para cargar el form de edicion
     function loadEditModal(id) {
