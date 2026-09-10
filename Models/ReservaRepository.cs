@@ -279,7 +279,7 @@ namespace inmobiliaria.Models
                 SET Estado = @Estado,
                     Multa = @Multa,
                     FechaFin = COALESCE(@FechaFin, FechaFin),
-                    UsuarioTerminadorId = @UsuarioId,
+                    UsuarioTerminadorId = @UsuarioTerminadorId,
                     FechaTerminacion = @FechaTerminacion
                 WHERE Id = @Id";
 
