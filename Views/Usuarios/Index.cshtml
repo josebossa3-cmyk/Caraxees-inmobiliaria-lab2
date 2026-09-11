@@ -6,10 +6,6 @@
 
 <h1>Usuarios</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Nuevo Usuario</a>
-</p>
-
 <table class="table table-striped">
     <thead>
         <tr>
@@ -17,6 +13,7 @@
             <th>Nombre Completo</th>
             <th>Rol</th>
             <th>Fecha Creación</th>
+            <th>Cambiar Rol</>
         </tr>
     </thead>
     <tbody>
@@ -27,6 +24,17 @@
                 <td>@u.NombreCompleto</td>
                 <td>@u.Rol</td>
                 <td>@u.FechaCreacion.ToString("dd/MM/yyyy")</td>
+                <td>
+                <form asp-action="CambiarRol" method="post" class="d-flex gap-2">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@u.Id" />
+                    <select name="nuevoRol" class="form-select form-select-sm">
+                        <option value="Empleado" selected="@(u.Rol == "Empleado")">Empleado</option>
+                        <option value="Administrador" selected="@(u.Rol == "Administrador")">Admin</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-primary">Cambiar</button>
+                </form>
+                </td>
             </tr>
         }
     </tbody>

@@ -33,12 +33,14 @@
                                 <i class="bi bi-house-door-fill"></i> Inicio
                             </a>
                         </li>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value == "Administrador"){
                         <li class="nav-item">
                             <a class="nav-link nav-pill @(currentController == "Usuarios" ? "active" : "")"
                                asp-controller="Usuarios" asp-action="Index">
                                 <i class="bi bi-person-fill"></i> Usuarios
                             </a>
                         </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link nav-pill @(currentController == "Propietarios" ? "active" : "")"
                                asp-area="" asp-controller="Propietarios" asp-action="Index">
@@ -66,6 +68,29 @@
                     </ul>
                 </div>
             </div>
+            <ul class="navbar-nav ms-auto">
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <li class="nav-item">
+            <span class="nav-link">Hola, @User.Identity.Name (@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)</span>
+        </li>
+        <li class="nav-item">
+            <form asp-controller="Usuarios" asp-action="Logout" method="post" class="d-flex">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-link nav-link">Cerrar sesión</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Usuarios" asp-action="Login">Iniciar sesión</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Usuarios" asp-action="Create">Registrarse</a>
+        </li>
+    }
+</ul>
         </nav>
     </header>
     <div class="container">
