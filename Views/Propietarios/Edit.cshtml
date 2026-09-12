@@ -1,15 +1,15 @@
 @model inmobiliaria.Models.Propietario
 
 @{
-  ViewData["Title"] = "Nuevo Propietario";
+  ViewData["Title"] = "Editar Propietario";
 }
+
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
     <h1 class="mb-1 mt-3">
-      <i class="bi bi-person-plus text-primary"></i>
-      Nuevo Propietario
+      <i class="bi bi-pencil-square text-warning"></i> Editar Propietario
     </h1>
-    <p class="text-muted mb-0">Completá los datos para dar de alta un nuevo propietario.</p>
+    <p class="text-muted p-0">Modificá los datos del propietario y guardá los cambios.</p>
   </div>
   <a asp-action="Index" class="btn btn-outline-secondary">
     <i class="bi bi-arrow-left"></i> Volver al listado
@@ -19,22 +19,24 @@
 <div class="row justify-content-center">
   <div class="col-lg-8">
     <div class="card shadow-sm border-0">
-      <div class="card-header bg-primary-subtle border-0 py-3">
+      <div class="card-header bg-warning-subtle border-0 py-3">
         <h5 class="mb-0">
-          <i class="bi bi-biperson-vcard"></i> Datos del propietario
+          <i class="bi bi-person-card"></i> Datos del propietario
         </h5>
       </div>
-
       <div class="card-body p-4">
-        <form asp-action="Create" method="post">
-          <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+        <form asp-action="Edit" method="post" asp-route-id="@Model.Id" id="editForm">
+          @Html.AntiForgeryToken()
+          <input type="hidden" asp-for="Id" />
+          <input type="hidden" asp-for="FechaAlta" />
 
+          <div asp-validation-summary="ModelOnly" class="alert text-danger" role="alert"></div>
           <div class="row">
             <div class="col-md-6 mb-3">
               <label asp-for="DNI" class="form-label fw-semibold">
                 <i class="bi bi-person-badge text-muted me-1"></i> DNI
               </label>
-              <input asp-for="DNI" class="form-control" placeholder="Ingrese el DNI" />
+              <input asp-for="DNI" class="form-control" placeholder="Ingrese el DNI">
               <span asp-validation-for="DNI" class="text-danger small"></span>
             </div>
 
@@ -50,20 +52,20 @@
               <label asp-for="Telefono" class="form-label fw-semibold">
                 <i class="bi bi-telephone text-muted me-1"></i> Teléfono
               </label>
-              <input asp-for="Telefono" class="form-control" placeholder="Ej: 2657226600">
+              <input asp-for="Telefono" class="form-control" placeholder="Ej: 2657445500">
               <span asp-validation-for="Telefono" class="text-danger small"></span>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label asp-for="Email" class="form-label fw-semibold">
-                <i class="bi bi-envelope text-muted me-1"></i> Email
+              <label asp-for="Email" class="form-label">
+                <i class="bi bi-envolpe text-muted me-1"></i> Email
               </label>
-              <input asp-for="Email" class="form-control" placeholder="correo@ejemplo.com" />
+              <input asp-for="Email" class="form-control" placeholder="correo@caraxes.com">
               <span asp-validation-for="Email" class="text-danger small"></span>
             </div>
 
-            <div class="col-md-12 mb-3">
-              <label asp-for="Direccion" class="form-label fw-semibold">
+            <div class="col-md-6 mb-3">
+              <label asp-for="Direccion" class="form-label">
                 <i class="bi bi-geo-alt text-muted me-1"></i> Dirección
               </label>
               <input asp-for="Direccion" class="form-control" placeholder="Calle, numero">
@@ -72,13 +74,12 @@
           </div>
 
           <hr class="my-4">
-
           <div class="d-flex justify-content-end gap-2">
-            <a asp-action="Index" class="btn btn-outline-secondary">
+            <a asp-action="Index" class="btn btn-secondary">
               <i class="bi bi-x-circle"></i> Cancelar
             </a>
             <button type="submit" class="btn btn-success">
-              <i class="bi bi-check-circle"></i> Guardar</a>
+              <i class="bi-check-circle"></i> Guardar cambios
             </button>
           </div>
         </form>
