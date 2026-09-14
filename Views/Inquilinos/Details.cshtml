@@ -4,32 +4,94 @@
   ViewData["Title"] = "Detalles de Inquilino";
 }
 
-<h1>Detalles de Inquilino</h1>
-
-<div>
-  <hr>
-  <dl class="row">
-    <dt class="col-sm-3">DNI</dt>
-    <dd class="col-sm-9">@Model.DNI</dd>
-
-    <dt class="col-sm-3">Nombre completo</dt>
-    <dd class="col-sm-9">@Model.NombreCompleto</dd>
-
-    <dt class="col-sm-3">Teléfono</dt>
-    <dd class="col-sm-9">@Model.Telefono</dd>
-
-    <dt class="col-sm-3">Email</dt>
-    <dd class="col-sm-9">@Model.Email</dd>
-
-    <dt class="col-sm-3">Dirección</dt>
-    <dd class="col-sm-9">@Model.Direccion</dd>
-
-    <dt class="col-sm-3">Fecha de alta</dt>
-    <dd class="col-sm-9">@Model.FechaAlta.ToString("dd/MM/yyyy")</dd>
-  </dl>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1 mt-3"><i class="bi bi-person-vcard text-info"></i> Detalles de Inquilino</h1>
+    <p class="text-muted mb-0">Información registrada del inquilino</p>
+  </div>
+  <a asp-action="Index" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left"></i> Volver al listado
+  </a>
 </div>
 
-<div>
-  <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-  <a asp-action="Index" class="btn btn-secondary">Volver</a>
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-info-subtle border-0 py-3">
+        <h5 class="mb-0">
+          <i class="bi bi-person-badge"> @Model.NombreCompleto</i>
+        </h5>
+      </div>
+
+      <div class="card-body p-4">
+        <dl class="row mb-0">
+          <dt class="col-sm-4 fw-semibold">
+            <i class="bi bi-person-badge text-muted me-1"></i> DNI
+          </dt>
+          <dd class="col-sm-8">@Model.DNI</dd>
+
+          <dt class="col-sm-4 fw-semibold">
+            <i class="bi bi-person text-muted me-1"></i> Nombre completo
+          </dt>
+          <dd class="col-sm-8">@Model.NombreCompleto</dd>
+
+          <dt class="col-sm-4 fw-semibold">
+            <i class="bi bi-telephone text-muted me-1"></i> Teléfono
+          </dt>
+          <dd class="col-sm-8">
+            @if (!string.IsNullOrEmpty(Model.Telefono))
+            {
+              @Model.Telefono
+            }
+            else
+            {
+              <span class="text-muted">-</span>
+            }
+          </dd>
+
+          <dt class="col-sm-4 fw-semibold">
+            <i class="bi bi-envelope text-muted me-1"></i> Email
+          </dt>
+          <dd class="col-sm-8">
+            @if (!string.IsNullOrEmpty(Model.Email))
+            {
+              <a href="mail:to@Model.Email">@Model.Email</a>
+            }
+            else
+            {
+              <span class="text-muted">-</span>
+            }
+          </dd>
+
+          <dt class="col-sm-4 fw-semibold">
+            <i class="bi bi-geo-alt text-muted me-1"></i> Dirección
+          </dt>
+          <dd class="col-sm-8">
+            @if (!string.IsNullOrEmpty(Model.Direccion))
+            {
+              @Model.Direccion
+            }
+            else
+            {
+              <span class="text-muted">-</span>
+            }
+          </dd>
+
+          <dt class="col-sm-4 fw-semibold">
+            <i class="bi bi-calendar-event text-muted me-1"></i> Fecha de alta
+          </dt>
+          <dd class="col-sm-8">@Model.FechaAlta.ToString("dd/MM/yyyy")</dd>
+        </dl>
+      </div>
+
+      <div class="card-footer bg-white d-flex justify-content-end gap-2 py-3">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Volver
+        </a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+          <i class="bi bi-pencil"></i> Editar
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
