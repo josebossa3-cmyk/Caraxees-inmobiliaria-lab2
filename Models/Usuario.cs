@@ -24,6 +24,8 @@ namespace inmobiliaria.Models
 
         public string? Avatar { get; set; }
 
+        public IFormFile? AvatarFile {get; set;}
+
         public string Rol { get; set; } = "";
 
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
