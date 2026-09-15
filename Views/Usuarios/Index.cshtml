@@ -1,41 +1,239 @@
-@model List<inmobiliaria.Models.Usuario>
+@model inmobiliaria.Models.PaginadoResult<inmobiliaria.Models.Usuario>
 
 @{
-    ViewData["Title"] = "Usuarios";
+  ViewData["Title"] = "Usuarios";
 }
 
-<h1>Usuarios</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1 mt-3"><i class="bi bi-person-fill"></i> Usuarios</h1>
+    <p class="text-muted mb-0">Gestión de usuarios registrados en el sistema</p>
+  </div>
+  <a asp-action="Create" class="btn btn-primary">
+    <i class="bi bi-plus-circle"></i> Nuevo Usuario
+  </a>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <form asp-action="Index" method="get">
+      <div class="input-group">
+        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+        <input type="text" name="searchString" value="@Model.Busqueda" class="form-control border-start-0" placeholder="Buscar por Nombre o email..." />
+        <button type="submit" class="btn btn-outline-primary">Buscar</button>
+        @if (!string.IsNullOrEmpty(Model.Busqueda))
+        {
+          <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-x-circle"></i> Limpiar
+          </a>
+        }
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
             <th>Email</th>
             <th>Nombre Completo</th>
             <th>Rol</th>
-            <th>Fecha Creación</th>
-            <th>Cambiar Rol</>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var u in Model)
-        {
+            <th>Fecha Creacion</th>
+            <td>Cambiar Rol</td>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!Model.Items.Any())
+          {
             <tr>
-                <td>@u.Email</td>
-                <td>@u.NombreCompleto</td>
-                <td>@u.Rol</td>
-                <td>@u.FechaCreacion.ToString("dd/MM/yyyy")</td>
-                <td>
-                <form asp-action="CambiarRol" method="post" class="d-flex gap-2">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="@u.Id" />
-                    <select name="nuevoRol" class="form-select form-select-sm">
-                        <option value="Empleado" selected="@(u.Rol == "Empleado")">Empleado</option>
-                        <option value="Administrador" selected="@(u.Rol == "Administrador")">Admin</option>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-primary">Cambiar</button>
-                </form>
-                </td>
+              <td colspan="5" class="text-center text-muted py-4">
+                <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                No se encontraron usuarios.
+              </td>
             </tr>
+          }
+          else
+          {
+            @foreach (var item in Model.Items)
+            {
+              <tr>
+                <td class="fw-semibold">@item.Email</td>
+                <td>@item.NombreCompleto</td>
+                <td>
+                  @if (!string.IsNullOrEmpty(item.Rol))
+                  {
+                    <i class="bi bi-person-gear"></i>
+                    @item.Rol
+                  }
+                  else
+                  {
+                    <span class="text-muted">-</span>
+                  }
+                </td>
+                <td>@item.FechaCreacion</td>
+                <td>
+                <div class="d-flex gap-2">
+                    <input type="hidden" name="selected-id" value="@item.Id" />
+                    <select name="selected-nuevoRol" class="form-select form-select-sm">
+                        <option value="Empleado" selected="@(item.Rol == "Empleado")">Empleado</option>
+                        <option value="Administrador" selected="@(item.Rol == "Administrador")">Admin</option>
+                    </select>
+                    <button type="button" class="btn btn-sm btn-primary" title="CambiarRol" data-bs-toggle="modal" 
+                    data-bs-target="#cambiarRolModal" data-nombre="@item.NombreCompleto">
+                    <i class="bi bi-person-gear"></i></button>
+                </div>
+                </td>
+                <td class="text-end">
+                  <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Ver detalles">
+                    <i class="bi bi-eye"></i>
+                  </a>
+
+                  <button type="button" class="btn btn-sm btn-danger" title="Eliminar" data-bs-toggle="modal"
+                          data-bs-target="#deleteModal" data-id="@item.Id" data-nombre="@item.NombreCompleto">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  @if (Model.TotalPaginas > 1)
+  {
+    <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+      <small class="text-muted">
+        Mostrando @Model.Items.Count de @Model.TotalRegistros registros
+      </small>
+    </div>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item @(Model.PaginaActual == 1 ? "disabled" : "")">
+          <a class="page-link" asp-action="Index" asp-route-page="@(Model.PaginaActual - 1)"
+             asp-route-searchString="@Model.Busqueda">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        </li>
+
+        @for (int i = 1; i <= Model.TotalPaginas; i++)
+        {
+          <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+            <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@Model.Busqueda">@i</a>
+          </li>
         }
-    </tbody>
-</table>
+
+        <li class="page-item @(Model.PaginaActual == Model.TotalPaginas ? "disabled" : "")">
+          <a class="page-link" asp-action="Index" asp-route-page="@(Model.PaginaActual + 1)"
+             asp-route-searchString="@Model.Busqueda">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  }
+  else
+  {
+    <div class="card-footer bg-white">
+      <small class="text-muted">Mostrando @Model.Items.Count de @Model.TotalRegistros registrados</small>
+    </div>
+  }
+</div>
+
+<!--  modal para eliminar Usuario -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger-subtle">
+        <h5 class="modal-title" id="deleteModalLabel">
+          <i class="bi bi-exclamation-triangle"></i> Confirmar eliminacion
+        </h5>
+        <button type="button" data-bs-dismiss="modal" class="btn-close" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">Estas seguro de eliminar al Usuario
+        <strong id="usuarioNombre"></strong>?
+        <br>
+        <small class="text-muted">Esta acción no se puede deshacer.</small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle"></i> Cancelar
+        </button>
+        <form asp-action="Delete" id="deleteForm" method="post" class="d-inline">
+          @Html.AntiForgeryToken()
+          <input type="hidden" id="usuarioId" name="id">
+          <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Eliminar
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--  modal para cambiar el rol de Usuario -->
+<div class="modal fade" id="cambiarRolModal" tabindex="-1" aria-labelledby="cambiarRolModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger-subtle">
+        <h5 class="modal-title" id="cambiarRolModalLabel">
+          <i class="bi bi-exclamation-triangle"></i> Confirmar cambio de Rol
+        </h5>
+        <button type="button" data-bs-dismiss="modal" class="btn-close" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">Estas seguro de cambiar el rol al Usuario
+        <strong id="usuarioRolNombre"></strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle"></i> Cancelar
+        </button>
+        <form asp-action="CambiarRol" id="cambiarRolForm" method="post" class="d-inline">
+          @Html.AntiForgeryToken()
+          <input type="hidden" id="usuarioRolId" name="id">
+          <input type="hidden" name="nuevoRol" id="nuevoRol">
+          <button type="submit" class="btn btn-danger">
+            <i class="bi bi-person-gear"></i> Cambiar Rol
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <script>
+    //script del modal para eliminar
+    var deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      var id = button.getAttribute('data-id');
+      var nombre = button.getAttribute('data-nombre');
+      document.getElementById('usuarioId').value = id;
+      document.getElementById('usuarioNombre').textContent = nombre;
+    });
+
+    //script del modal para cambiar rol
+    var cambiarRolModal = document.getElementById('cambiarRolModal');
+    cambiarRolModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      var row = button.closest('tr');
+      var id = row.querySelector('input[name="selected-id"]').value;
+      var rol = row.querySelector('select[name="selected-nuevoRol"]').value;
+      var nombre = button.getAttribute("data-nombre");
+      document.getElementById('usuarioRolId').value = id;
+      document.getElementById('nuevoRol').value = rol;
+      document.getElementById('usuarioRolNombre').textContent = nombre;
+    });
+
+
+  </script>
+}
