@@ -15,7 +15,7 @@ namespace inmobiliaria.Controllers
         private readonly UsuarioRepository _repo;
         private readonly IWebHostEnvironment _environment;
 
-        public UsuariosController(UsuarioRepository repo,IWebHostEnvironment environment)
+        public UsuariosController(UsuarioRepository repo, IWebHostEnvironment environment)
         {
             _repo = repo;
             _environment = environment;
@@ -79,9 +79,11 @@ namespace inmobiliaria.Controllers
             }
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, usuario.Email),
+                new Claim(ClaimTypes.Name, usuario.NombreCompleto),
                 new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-                new Claim(ClaimTypes.Role, usuario.Rol)
+                new Claim(ClaimTypes.Role, usuario.Rol),
+                new Claim(ClaimTypes.Email, usuario.Email),
+                new Claim("Avatar", usuario.Avatar ?? "")
 
             };
 
@@ -140,9 +142,9 @@ namespace inmobiliaria.Controllers
         {
             var id = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-            var usuarioExistente =  await _repo.ObtenerPorIdAsync(id);
-            if(usuarioExistente == null)
-            return NotFound();
+            var usuarioExistente = await _repo.ObtenerPorIdAsync(id);
+            if (usuarioExistente == null)
+                return NotFound();
 
             if (string.IsNullOrWhiteSpace(usuario.NombreCompleto))
             {
@@ -154,25 +156,67 @@ namespace inmobiliaria.Controllers
 
             usuarioExistente.NombreCompleto = usuario.NombreCompleto;
 
-            if(usuario.AvatarFile != null)
+            if (usuario.AvatarFile != null)
             {
                 var wwwPath = _environment.WebRootPath;
-                var carpeta = Path.Combine(wwwPath,"uploads");
+                var carpeta = Path.Combine(wwwPath, "uploads");
                 if (!Directory.Exists(carpeta))
-                    Directory.CreateDirectory(carpeta);    
-            
+                    Directory.CreateDirectory(carpeta);
+
                 var nombreArchivo = $"avatar_{id}{Path.GetExtension(usuario.AvatarFile.FileName)}";
-                var rutaCompleta = Path.Combine(carpeta,nombreArchivo);
-            
+                var rutaCompleta = Path.Combine(carpeta, nombreArchivo);
+
                 using (var stream = new FileStream(rutaCompleta, FileMode.Create))
-                    {
-                        await usuario.AvatarFile.CopyToAsync(stream);
-                    }
+                {
+                    await usuario.AvatarFile.CopyToAsync(stream);
+                }
                 usuarioExistente.Avatar = "/uploads/" + nombreArchivo;
             }
             await _repo.ActualizarAsync(usuarioExistente);
 
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, usuarioExistente.NombreCompleto),
+        new Claim(ClaimTypes.NameIdentifier, usuarioExistente.Id.ToString()),
+        new Claim(ClaimTypes.Role, usuarioExistente.Rol),
+        new Claim(ClaimTypes.Email, usuarioExistente.Email),
+        new Claim("Avatar", usuarioExistente.Avatar ?? "")
+    };
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+
             return RedirectToAction(nameof(Perfil));
         }
+
+        [HttpGet]
+        public IActionResult CambiarPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CambiarPassword(CambiarPasswordDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return View(dto);
+
+            var id = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var usuario = await _repo.ObtenerPorIdAsync(id);
+            if (usuario == null) return NotFound();
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.PasswordActual, usuario.PasswordHash))
+            {
+                ModelState.AddModelError(nameof(dto.PasswordActual), "La contraseña actual es incorrecta");
+                return View(dto);
+            }
+
+            usuario.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.PasswordNueva);
+            await _repo.ActualizarAsync(usuario);
+
+            TempData["Mensaje"] = "Contraseña actualizada correctamente";
+            return RedirectToAction(nameof(Perfil));
+        }
+
     }
 }

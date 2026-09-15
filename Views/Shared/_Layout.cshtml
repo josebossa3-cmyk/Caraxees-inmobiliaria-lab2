@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -77,6 +78,11 @@
             <ul class="navbar-nav ms-auto">
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
+        var avatar = User.FindFirst("Avatar")?.Value;
+        @if (!string.IsNullOrEmpty(avatar))
+        {
+            <img src="@avatar" alt="Avatar" style="width:40px;height:40px;object-fit:cover;border-radius:50%;" class="mb-3"  />
+        }
         <li class="nav-item">
             <a class="nav-link nav-pill @(currentController == "Perfil" ? "active" : "")"
                                asp-controller="Usuarios" asp-action="Perfil">
