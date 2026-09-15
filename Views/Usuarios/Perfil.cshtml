@@ -1,0 +1,39 @@
+@model inmobiliaria.Models.Usuario
+
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<h1>Mi Perfil</h1>
+
+@if (!string.IsNullOrEmpty(Model.Avatar))
+{
+    <img src="@Model.Avatar" alt="Avatar" style="width:120px;height:120px;object-fit:cover;border-radius:50%;" class="mb-3" />
+}
+
+<form asp-action="Perfil" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input value="@Model.Email" class="form-control" disabled />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NombreCompleto" class="form-label"></label>
+        <input asp-for="NombreCompleto" class="form-control" />
+        <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Avatar</label>
+    @*    <input asp-for="AvatarFile" type="file" class="form-control" accept="image/*" />*@
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+</form>
+
+<hr />
+<a asp-action="CambiarPassword" class="btn btn-outline-secondary">Cambiar contraseña</a>

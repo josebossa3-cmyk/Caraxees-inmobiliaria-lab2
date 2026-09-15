@@ -72,7 +72,11 @@
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         <li class="nav-item">
-            <span class="nav-link">Hola, @User.Identity.Name (@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)</span>
+            <a class="nav-link nav-pill @(currentController == "Perfil" ? "active" : "")"
+                               asp-controller="Usuarios" asp-action="Perfil">
+                                <span class="nav-link">Hola, @User.Identity.Name (@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)</span>
+                            </a>
+            
         </li>
         <li class="nav-item">
             <form asp-controller="Usuarios" asp-action="Logout" method="post" class="d-flex">
