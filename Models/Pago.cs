@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace inmobiliaria.Models
 {
@@ -14,14 +13,6 @@ namespace inmobiliaria.Models
 
         public decimal Importe { get; set; }
 
-        public Boolean Estado { get; set; }
-
-        public int UsuarioCreadorId { get; set; }
-
-        public int UsuarioAnuladorId { get; set; }
-
-        public DateTime FechaAnulacion { get; set; }
-
-
+        public string Estado { get; set; } = "Activo";
     }
 }

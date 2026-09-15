@@ -65,6 +65,12 @@
                                 <i class="bi bi-file-earmark-text"></i> Reservas
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-pill @(currentController == "Pagos" ? "active" : "")"
+                               asp-controller="Pagos" asp-action="Index">
+                                <i class="bi bi-cash-coin"></i> Pagos
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
