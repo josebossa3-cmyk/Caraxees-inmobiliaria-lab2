@@ -4,11 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace inmobiliaria.Controllers
 {
+    [Authorize]
     public class InquilinosController : Controller
     {
         private readonly InquilinoRepository _repo;

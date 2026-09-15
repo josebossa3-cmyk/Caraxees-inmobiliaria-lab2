@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace inmobiliaria.Controllers
 {
+    [Authorize]
     public class ReservaController : Controller
     {
         private readonly ReservaRepository _repo;

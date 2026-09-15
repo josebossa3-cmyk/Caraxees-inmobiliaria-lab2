@@ -1,9 +1,11 @@
 using inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace inmobiliaria.Controllers
 {
+  [Authorize]
   public class PropietariosController : Controller
   {
     private readonly PropietarioRepository _repo;

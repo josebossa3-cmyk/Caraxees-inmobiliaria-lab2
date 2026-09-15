@@ -1,11 +1,13 @@
 using System.Threading.Tasks;
 using inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 
 namespace inmobiliaria.Controllers
 {
+  [Authorize]
   public class InmueblesController : Controller
   {
     private readonly InmuebleRepository _repo;
