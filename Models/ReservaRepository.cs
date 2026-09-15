@@ -240,12 +240,21 @@ namespace inmobiliaria.Models
         {
             using var connection = new MySqlConnection(_database.ConnectionString);
             await connection.OpenAsync();
-            var query = @"DELETE FROM reservas WHERE Id = @Id";
-            using var command = new MySqlCommand(query, connection);
-            command.Parameters.AddWithValue("@Id", id);
-            await command.ExecuteNonQueryAsync();
+            using var transaction = await connection.BeginTransactionAsync();
 
+            using (var pagosCommand = new MySqlCommand("DELETE FROM pagos WHERE ReservaId = @Id", connection, transaction))
+            {
+                pagosCommand.Parameters.AddWithValue("@Id", id);
+                await pagosCommand.ExecuteNonQueryAsync();
+            }
 
+            using (var reservaCommand = new MySqlCommand("DELETE FROM reservas WHERE Id = @Id", connection, transaction))
+            {
+                reservaCommand.Parameters.AddWithValue("@Id", id);
+                await reservaCommand.ExecuteNonQueryAsync();
+            }
+
+            await transaction.CommitAsync();
 
         }
 

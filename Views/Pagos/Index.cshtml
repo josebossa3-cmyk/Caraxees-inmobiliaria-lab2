@@ -1,0 +1,104 @@
+@model PagosIndexViewModel
+
+@{
+    ViewData["Title"] = "Pagos";
+    var totalPagado = Model.Pagos
+        .Where(p => p.Estado == "Activo")
+        .Sum(p => p.Importe);
+    var pagosDeReserva = Model.ReservaId.HasValue
+        ? Model.Pagos.Where(p => p.ReservaId == Model.ReservaId.Value && p.Estado == "Activo").Sum(p => p.Importe)
+        : 0;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Pagos</h1>
+    <strong>Total cobrado: @totalPagado.ToString("C")</strong>
+</div>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="card mb-4">
+    <div class="card-header">Todos los pagos</div>
+    <div class="card-body p-0">
+        @if (Model.Pagos.Count == 0)
+        {
+            <p class="text-muted p-3 mb-0">Todavía no hay pagos registrados.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Reserva</th>
+                            <th>Fecha</th>
+                            <th>Concepto</th>
+                            <th>Importe</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pago in Model.Pagos)
+                        {
+                            <tr>
+                                <td>#@pago.ReservaId</td>
+                                <td>@pago.FechaPago.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@pago.Concepto</td>
+                                <td>@pago.Importe.ToString("C")</td>
+                                <td>
+                                    <span class="badge @(pago.Estado == "Activo" ? "bg-success" : "bg-secondary")">@pago.Estado</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Realizar nuevo pago</div>
+    <div class="card-body">
+        <form asp-controller="Pagos" asp-action="Index" method="get" class="mb-3">
+            <label asp-for="ReservaId" class="form-label">Reserva a pagar</label>
+            <div class="d-flex gap-2">
+                <select asp-for="ReservaId" class="form-select" onchange="this.form.submit()">
+                    <option value="">Seleccione una reserva para realizar un pago</option>
+                    @foreach (var reserva in Model.Reservas)
+                    {
+                        <option value="@reserva.Id">
+                            Reserva #@reserva.Id - @reserva.Inquilino?.NombreCompleto - @reserva.Inmueble?.Direccion
+                        </option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary text-nowrap">Cargar pago</button>
+            </div>
+        </form>
+
+        @if (Model.ReservaSeleccionada != null)
+        {
+            var saldoPendiente = Math.Max(Model.TotalReserva - pagosDeReserva, 0);
+            <div class="row align-items-end">
+                <div class="col-md-8">
+                    <p class="mb-1"><strong>Reserva #@Model.ReservaSeleccionada.Id</strong> - @Model.ReservaSeleccionada.Inquilino?.NombreCompleto</p>
+                    <p class="text-muted mb-0">Total: @Model.TotalReserva.ToString("C") | Pagado: @pagosDeReserva.ToString("C") | Saldo: @saldoPendiente.ToString("C")</p>
+                </div>
+                <div class="col-md-4">
+                    <form asp-controller="Pagos" asp-action="Crear" asp-route-id="@Model.ReservaSeleccionada.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-success w-100" @(saldoPendiente <= 0 ? "disabled" : "")>Realizar pago por @saldoPendiente.ToString("C")</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>

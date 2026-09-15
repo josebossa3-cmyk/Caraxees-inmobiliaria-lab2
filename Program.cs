@@ -12,6 +12,7 @@ builder.Services.AddScoped<InquilinoRepository>();
 builder.Services.AddScoped<InmuebleRepository>();
 builder.Services.AddScoped<TipoInmuebleRepository>();
 builder.Services.AddScoped<ReservaRepository>();
+builder.Services.AddScoped<PagoRepository>();
 builder.Services.AddScoped<ImagenInmuebleRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
