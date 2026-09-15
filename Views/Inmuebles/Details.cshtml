@@ -4,95 +4,156 @@
   ViewData["Title"] = "Detalles de Inmueble";
 }
 
-<h1>Detalles</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1 mt-3">
+      <i class="bi bi-house-door text-info"></i> Detalles del Inmueble
+    </h1>
+    <p class="text-muted mb-0">Información completa del inmueble.</p>
+  </div>
+  <a asp-action="Index" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left"></i> Volver al listado
+  </a>
+</div>
 
-<div class="row">
+<div class="row g-4">
   <div class="col-md-6">
-    <dl class="row">
-      <dt class="col-sm-4">Dirección</dt>
-      <dd class="col-sm-8">@Model.Direccion</dd>
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-info-subtle border-0 py-3">
+        <h5 class="mb-0">
+          <i class="bi bi-info-circle"></i> Información general
+        </h5>
+      </div>
+      <div class="card-body p-4">
+        <dl class="row mb-0">
+          <dt class="col-sm-5 fw-semibold">
+            <i class="bi bi-geo-alt text-muted me-1"></i> Dirección
+          </dt>
+          <dd class="col-sm-7">@Model.Direccion</dd>
 
-      <dt class="col-sm-4">Propietario</dt>
-      <dd class="col-sm-8">@Model.Propietario?.NombreCompleto</dd>
+          <dt class="col-sm-5 fw-semibold">
+            <i class="bi bi-person-badge text-muted me-1"></i> Propietario
+          </dt>
+          <dd class="col-sm-7">@Model.Propietario?.NombreCompleto</dd>
 
-      <dt class="col-sm-4">Tipo</dt>
-      <dd class="col-sm-8">@Model.TipoInmueble?.Nombre</dd>
+          <dt class="col-sm-5 fw-semibold">
+            <i class="bi bi-tags text-muted me-1"></i> Tipo
+          </dt>
+          <dd class="col-sm-7">
+            <span class="badge bg-primary-subtle text-primary">@Model.TipoInmueble?.Nombre</span>
+          </dd>
 
-      <dt class="col-sm-4">Cupo</dt>
-      <dd class="col-sm-8">@Model.Cupo</dd>
+          <dt class="col-sm-5 fw-semibold">
+            <i class="bi bi-people text-muted me-1"></i> Cupo
+          </dt>
+          <dd class="col-sm-7">@Model.Cupo personas</dd>
 
-      <dt class="col-sm-4">Precio por dia</dt>
-      <dd class="col-sm-8">@Model.PrecioPorDia.ToString("C")</dd>
+          <dt class="col-sm-5 fw-semibold">
+            <i class="bi bi-cash-coin text-muted me-1"></i> Precio por día
+          </dt>
+          <dd class="col-sm-7">@Model.PrecioPorDia.ToString("C")</dd>
 
-      <dt class="col-sm-4">Porcentaje reserva</dt>
-      <dd class="col-sm-8">@Model.PorcentajeReserva%</dd>
+          <dt class="col-sm-5 fw-semibold">
+            <i class="bi bi-percent text-muted me-1"></i> Porcentaje reserva
+          </dt>
+          <dd class="col-sm-7">@Model.PorcentajeReserva %</dd>
 
-      <dt class="col-sm-4">Estado</dt>
-      <dd class="col-sm-8">
-        <span class="badge @(Model.Estado ? "bg-success" : "bg-secondary")">
-          @(Model.Estado ? "Disponible" : "Suspendido")
-        </span>
-      </dd>
-    </dl>
+          <dt class="col-sm-5 fw-semibold">
+            <i class="bi bi-toggle-on text-muted me-1"></i> Estado
+          </dt>
+          <dd class="col-sm-7">
+            <span class="badge @(Model.Estado ? "bg-success" : "bg-secondary")">
+              @(Model.Estado ? "Disponible" : "Suspendido")
+            </span>
+          </dd>
+        </dl>
+      </div>
+    </div>
   </div>
 
-  <div class=" col-md-6">
-    <h5>Ubicacion</h5>
-    @if (!string.IsNullOrEmpty(Model.Coordenadas) && Model.Coordenadas.Contains(','))
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-success-subtle border-0 py-3">
+        <h5 class="mb-0"><i class="bi bi-map"></i> Ubicación</h5>
+      </div>
+      <div class="card-body p-4 d-flex align-items-center">
+        @if (!string.IsNullOrEmpty(Model.Coordenadas) && Model.Coordenadas.Contains(','))
+        {
+          <div id="map" class="rounded shadow-sm w-100" style="height: 320px;"></div>
+        }
+        else
+        {
+          <p class="text-muted mb-0">
+            <i class="bi bi-exclamation-circle me-1"></i> Sin coordenadas registradas.
+          </p>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm border-0 mt-4">
+  <div class="card-header bg-primary-subtle border-0 py-3">
+    <h5 class="mb-0"><i class="bi bi-images"></i> Galería de imagenes</h5>
+  </div>
+  <div class="card-body p-4">
+    @if (ViewBag.Imagenes != null && ((List<inmobiliaria.Models.ImagenInmueble>)ViewBag.Imagenes).Count > 0)
     {
-      <div id="map" style="height: 300px;"></div>
+      var imagenes = (List<inmobiliaria.Models.ImagenInmueble>)ViewBag.Imagenes;
+      <div id="carouselInmueble" class="carousel slide" data-bs-ride="carousel">
+        <ol class="carousel-indicators">
+          @for (int i = 0; i < imagenes.Count; i++)
+          {
+            <li data-bs-target="#carouselInmueble" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></li>
+          }
+        </ol>
+        <div class="carousel-inner rounded">
+          @for (int i = 0; i < imagenes.Count; i++)
+          {
+            <div class="carousel-item @(i == 0 ? "active" : "")">
+              <img src="@imagenes[i].Url" alt="Imagen del inmueble" class="d-block w-100"
+                   style="max-height: 400px; object-fit: cover;" />
+              @if (imagenes[i].EsPortada)
+              {
+                <div class="carousel-caption d-none d-md-block">
+                  <span class="badge bg-primary">Portada</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+        @if (imagenes.Count > 1)
+        {
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselInmueble" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselInmueble" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+          </button>
+        }
+      </div>
     }
     else
     {
-      <p class="text-muted">Sin coordenadas registradas.</p>
+      <p class="text-muted mb-0">
+        <i class="bi bi-image me-1"></i> No hay imagenes cargadas.
+      </p>
     }
   </div>
 </div>
 
-<hr>
-<h4>Imagenes</h4>
-@if (ViewBag.Imagenes != null && ((List<inmobiliaria.Models.ImagenInmueble>)ViewBag.Imagenes).Count > 0)
-{
-  var imagenes = (List<inmobiliaria.Models.ImagenInmueble>)ViewBag.Imagenes;
-    <div id="carouselInmueble" class="carousel slide" data-bs-ride="carousel">
-      <ol class="carousel-indicators">
-        @for(int i = 0; i < imagenes.Count; i++){
-          <li data-bs-target="#carouselInmueble" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></li>
-        }
-      </ol>
-      <div class="carousel-inner">
-        @for(int i = 0; i < imagenes.Count; i++){
-          <div class="carousel-item @(i == 0 ? "active" : "")">
-            <img src="@imagenes[i].Url" alt="imagen de inmueble" class="d-block w-100 rounded" style="max-height: 400px; object-fit: cover;"/>
-            @if(imagenes[i].EsPortada){
-              <div class="carousel-caption d-none d-md-block">
-                <span class="badge bg-primary">Portada</span>
-              </div>
-            }
-          </div>
-        }
-      </div>
-      @if(imagenes.Count > 1){
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselInmueble" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Anterior</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselInmueble" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Siguiente</span>
-        </button>
-      }
-    </div>
-}
-else
-{
-  <p class="text-muted">No hay imagenes cargadas</p>
-}
-
-<div class="mt-4">
-  <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
-  <a asp-action="Index" class="btn btn-secondary">Volver</a>
+<div class="d-flex justify-content-end gap-2 mt-4">
+  <a asp-action="Index" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left"></i> Volver
+  </a>
+  <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+    <i class="bi bi-pencil"></i> Editar
+  </a>
 </div>
+</div>
+
 
 @section Scripts {
   @if (!string.IsNullOrEmpty(Model.Coordenadas) && Model.Coordenadas.Contains(','))

@@ -4,74 +4,94 @@
   ViewData["Title"] = "Inmuebles";
 }
 
-<h1>Inmuebles</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1 mt-3">
+      <i class="bi bi-building text-primary"></i> Inmuebles
+    </h1>
+    <p class="text-muted mb-0">Gestión de inmuebles registrados en el sistema</p>
+  </div>
+  <a asp-action="Create" class="btn btn-primary">
+    <i class="bi bi-plus-circle"></i> Nuevo Inmueble
+  </a>
+</div>
 
-<p>
-  <a asp-action="Create" class="btn btn-primary">Nuevo Inmueble</a>
-</p>
-
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Imagen</th>
-      <th>Dirección</th>
-      <th>Propietario</th>
-      <th>Tipo</th>
-      <th>Precio</th>
-      <th>Estado</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (var item in Model)
-    {
-      <tr>
-        <td>
-          @if (!string.IsNullOrEmpty(item.ImagenPortada))
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Imagen</th>
+            <th>Dirección</th>
+            <th>Propietario</th>
+            <th>Tipo</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!Model.Any())
           {
-            <img src="@item.ImagenPortada" alt="Portada" style="max-width: 80px; max-height: 60px; cursor: pointer;"
-                class="img-thumbnail" onclick="abrirModalImagen('@item.ImagenPortada')" />
+            <tr>
+              <td colspan="7" class="text-center text-muted py-4">
+                <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                No se encontraron inmuebles
+              </td>
+            </tr>
           }
           else
           {
-            <span class="text-muted">Sin imagen</span>
+            @foreach (var item in Model)
+            {
+              <tr>
+                <td>
+                  @if (!string.IsNullOrEmpty(item.ImagenPortada))
+                  {
+                    <img src="@item.ImagenPortada" alt="Portada" style="max-width: 80px; max-height: 60px; object-fit:cover;"
+                         class="rounded shadow-sm" />
+                  }
+                  else
+                  {
+                    <span class="badge bg-light text-muted">Sin imagen</span>
+                  }
+                </td>
+                <td class="fw-semibold">
+                  <i class="bi bi-geo-alt text-muted me-1"></i>@item.Direccion
+                </td>
+                <td>@item.Propietario?.NombreCompleto</td>
+                <td>
+                  <span class="badge bg-primary-subtle text-primary">
+                    @item.TipoInmueble?.Nombre
+                  </span>
+                </td>
+                <td>@item.PrecioPorDia.ToString("C")</td>
+                <td>
+                  <span class="badge @(item.Estado ? "bg-success" : "bg-secondary")">
+                    @(item.Estado ? "Disponible" : "Suspendido")
+                  </span>
+                </td>
+                <td class="text-end">
+                  <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Detalles"><i
+                    class="bi bi-eye"></i>
+                  </a>
+                  <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" title="Editar">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Eliminar">
+                    <i class="bi bi-trash"></i>
+                  </a>
+                </td>
+              </tr>
+            }
           }
-        </td>
-        <td>@item.Direccion</td>
-        <td>@item.Propietario?.NombreCompleto</td>
-        <td>@item.TipoInmueble?.Nombre</td>
-        <td>@item.PrecioPorDia.ToString("C")</td>
-        <td>@(item.Estado ? "Disponible" : "Suspendido")</td>
-        <td>
-          <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Detalles</a>
-          <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Editar</a>
-          <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
-        </td>
-      </tr>
-    }
-  </tbody>
-</table>
-
-<div class="modal fade" id="modalImagenPortada" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Imagen de Portada</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body text-center">
-        <img id="imgModalPortada" src="" class="img-fluid rounded" alt="Portada Inmueble" />
-      </div>
+        </tbody>
+      </table>
     </div>
   </div>
-</div>
 
-@section Scripts {
-  <script>
-    function abrirModalImagen(url) {
-      document.getElementById('imgModalPortada').src = url;
-      var modal = new bootstrap.Modal(document.getElementById('modalImagenPortada'));
-      modal.show();
-    }
-  </script>
-}
+  <div class="card-footer bg-white">
+    <small class="text-muted">Mostrando @Model.Count() inmuebles</small>
+  </div>
+</div>
