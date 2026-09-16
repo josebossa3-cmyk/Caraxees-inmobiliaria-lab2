@@ -2,58 +2,100 @@ html {
   font-size: 14px;
 }
 
-.navbar.bg-dark {
-  background-color: #212529 !important;
-}
-
-.navbar .nav-pill {
-  color: rgba(255, 255, 255, 0.65);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.85rem;
-  border-radius: 0.4rem;
-  white-space: nowrap;
-}
-
-.navbar .nav-pill:hover,
-.navbar .nav-pill:focus {
-  color: #fff;
-}
-
-.navbar .nav-pill.active {
-  color: #fff;
-  background-color: #0d6efd;
-}
-
-.navbar .dropdown-item i {
-  margin-right: 0.4rem;
-}
-
 @media (min-width: 768px) {
   html {
     font-size: 16px;
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
-  margin-bottom: 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+body > .container {
+  flex: 1;
+}
+
+a {
+  color: #0077cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.navbar-brand {
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.navbar .nav-link {
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  padding: 0.4rem 0.75rem;
+}
+
+.navbar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.navbar .nav-link.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow:
+    0 0 0 0.1rem white,
+    0 0 0 0.25rem #258cfb;
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+}
+
+.footer {
+  font-size: 0.9rem;
+  background-color: #f8f9fa;
+  margin-top: auto;
+}
+
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
   text-align: start;
 }

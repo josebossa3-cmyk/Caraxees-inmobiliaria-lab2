@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -17,107 +16,134 @@
 
 <body>
     @{
-        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-    }
+            var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+            var isAuth = User.Identity != null && User.Identity.IsAuthenticated;
+            var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            var avatar = User.FindFirst("Avatar")?.Value;
+            var userName = User.Identity?.Name ?? "";
+        }
+
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div class="container-fluid px-3">
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex -align-items-center gap-2">
+                    <i class="bi bi-building fs-4 text-warning"></i>
+                    <span class="fw-bold">Caraxes Inmobiliaria</span>
+                </a>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarApp"
                         aria-controls="navbarApp" aria-expanded="false" aria-label="Abrir menú">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="collapse navbar-collapse" id="navbarApp">
-                    <ul class="navbar-nav align-items-lg-center gap-lg-2">
+                    <ul class="navbar-nav me-auto gap-lg-1">
                         <li class="nav-item">
-                            <a class="nav-link nav-pill @(currentController == "Home" ? "active" : "")" asp-area=""
+                            <a class="nav-link @(currentController == "Home" ? "active" : "")"
                                asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house-door-fill"></i> Inicio
+                                <i class="bi bi-house-door-fill me-1"></i> Inicio
                             </a>
                         </li>
-                        @if (User.Identity != null && User.Identity.IsAuthenticated && User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value == "Administrador"){
+
+                        @if (isAuth && role=="Administrador")
+                        {
                         <li class="nav-item">
-                            <a class="nav-link nav-pill @(currentController == "Usuarios" ? "active" : "")"
+                            <a class="nav-link@(currentController == "Usuarios" ? "active" : "")"
                                asp-controller="Usuarios" asp-action="Index">
-                                <i class="bi bi-person-fill"></i> Usuarios
+                                <i class="bi bi-person-fill me-1"></i> Usuarios
                             </a>
                         </li>
                         }
                         <li class="nav-item">
-                            <a class="nav-link nav-pill @(currentController == "Propietarios" ? "active" : "")"
+                            <a class="nav-link @(currentController == "Propietarios" ? "active" : "")"
                                asp-area="" asp-controller="Propietarios" asp-action="Index">
-                                <i class="bi bi-person-standing"></i> Propietarios
+                                <i class="bi bi-person-standing me-1"></i> Propietarios
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link nav-pill @(currentController == "Inquilinos" ? "active" : "")"
+                            <a class="nav-link @(currentController == "Inquilinos" ? "active" : "")"
                                asp-area="" asp-controller="Inquilinos" asp-action="Index">
-                                <i class="bi bi-people-fill"></i> Inquilinos
+                                <i class="bi bi-people-fill me-1"></i> Inquilinos
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link nav-pill @(currentController == "Inmuebles" ? "active" : "")"
+                            <a class="nav-link @(currentController == "Inmuebles" ? "active" : "")"
                                asp-controller="Inmuebles" asp-action="Index">
-                                <i class="bi bi-building"></i> Inmuebles
+                                <i class="bi bi-building me-1"></i> Inmuebles
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link nav-pill @(currentController == "Reserva" ? "active" : "")"
                                asp-controller="Reserva" asp-action="Index">
-                                <i class="bi bi-file-earmark-text"></i> Reservas
+                                <i class="bi bi-file-earmark-text me-1"></i> Reservas
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link nav-pill @(currentController == "Pagos" ? "active" : "")"
+                            <a class="nav-link @(currentController == "Pagos" ? "active" : "")"
                                asp-controller="Pagos" asp-action="Index">
-                                <i class="bi bi-cash-coin"></i> Pagos
+                                <i class="bi bi-cash-coin me-1"></i> Pagos
                             </a>
                         </li>
                     </ul>
+
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                        @if (isAuth)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2 @(currentController == "Usuarios" ? "active" : "")"
+                               asp-controller="Usuarios" asp-action="Perfil">
+                                        @if (!string.IsNullOrEmpty(avatar)) {
+                                            <img src="@avatar" alt="Avatar" style="width:32px; height:32px; object-fit:cover; border-radius:50%;"/>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-person-circle fs-4"></i>
+                                        }
+                                            <span>
+                                                @userName
+                                                @if(!string.IsNullOrEmpty(role))
+                                                {
+                                                    <small class="text-warning">(@role)</small>
+                                                }
+                                            </span>
+                                    </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <form asp-controller="Usuarios" asp-action="Logout" method="post" class="d-flex">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link nav-link">
+                                        <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión</button>
+                                    </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Usuarios" asp-action="Login">
+                                    <i class="bi bi-box arrow-in-right me-1"></i> Iniciar sesión
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Usuarios" asp-action="Create">Registrarse</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
-            <ul class="navbar-nav ms-auto">
-    @if (User.Identity != null && User.Identity.IsAuthenticated)
-    {
-        var avatar = User.FindFirst("Avatar")?.Value;
-        @if (!string.IsNullOrEmpty(avatar))
-        {
-            <img src="@avatar" alt="Avatar" style="width:40px;height:40px;object-fit:cover;border-radius:50%;" class="mb-3"  />
-        }
-        <li class="nav-item">
-            <a class="nav-link nav-pill @(currentController == "Perfil" ? "active" : "")"
-                               asp-controller="Usuarios" asp-action="Perfil">
-                                <span class="nav-link">Hola, @User.Identity.Name (@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)</span>
-                            </a>
-            
-        </li>
-        <li class="nav-item">
-            <form asp-controller="Usuarios" asp-action="Logout" method="post" class="d-flex">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-link nav-link">Cerrar sesión</button>
-            </form>
-        </li>
-    }
-    else
-    {
-        <li class="nav-item">
-            <a class="nav-link" asp-controller="Usuarios" asp-action="Login">Iniciar sesión</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-controller="Usuarios" asp-action="Create">Registrarse</a>
-        </li>
-    }
-</ul>
         </nav>
     </header>
+
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-3 pt-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - inmobiliaria - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-top footer text-muted mt-4">
+        <div class="container d-flex justify-content-between align-items-center py-3">
+            <span>&copy; @DateTime.Now.Year - Inmobiliaria Caraxes</span>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
