@@ -12,6 +12,7 @@ namespace inmobiliaria.Controllers
     {
         private readonly ReservaRepository _reservaRepo;
         private readonly PagoRepository _pagoRepo;
+        private const int UsuarioActualId = 1;
 
         public PagosController(ReservaRepository reservaRepo, PagoRepository pagoRepo)
         {
@@ -22,19 +23,28 @@ namespace inmobiliaria.Controllers
         public async Task<IActionResult> Index(int? reservaId)
         {
             var reservas = await _reservaRepo.ObtenerTodosAsync();
+
             var model = new PagosIndexViewModel
             {
-                Reservas = reservas,
-                ReservaId = reservaId,
-                Pagos = await _pagoRepo.ObtenerPorReservaAsync(null)
+                Reservas = reservas.Where(r => r.Estado == "Vigente").ToList(),
+                ReservaId = reservaId
             };
 
             if (reservaId.HasValue)
             {
-                model.ReservaSeleccionada = reservas.Find(reserva => reserva.Id == reservaId.Value);
+                model.ReservaSeleccionada = reservas.FirstOrDefault(r => r.Id == reservaId.Value);
                 if (model.ReservaSeleccionada == null) return NotFound();
 
                 model.TotalReserva = CalcularTotalReserva(model.ReservaSeleccionada);
+
+                var pagos = await _pagoRepo.ObtenerPorReservaAsync(reservaId.Value);
+                model.Pagos = pagos;
+                model.TotalPagado = pagos.Where(p => p.Estado == "Activo").Sum(p => p.Importe);
+                model.MontoSeña = model.TotalReserva * (model.ReservaSeleccionada.PorcentajeReserva / 100m);
+            }
+            else
+            {
+                model.Pagos = await _pagoRepo.ObtenerPorReservaAsync(null);
             }
 
             return View(model);
@@ -42,16 +52,21 @@ namespace inmobiliaria.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear(int id)
+        public async Task<IActionResult> Crear(int id, string concepto, decimal importe)
         {
             var reserva = await _reservaRepo.ObtenerPorIdAsync(id);
             if (reserva == null) return NotFound();
 
+            if (string.IsNullOrWhiteSpace(concepto) || importe <= 0)
+            {
+                TempData["Error"] = "Debe indicar un concepto y un importe mayor a cero.";
+                return RedirectToAction(nameof(Index), new { reservaId = id });
+            }
+
             var pagos = await _pagoRepo.ObtenerPorReservaAsync(id);
             var totalReserva = CalcularTotalReserva(reserva);
             var totalPagado = pagos
-                .Where(pago => pago.Estado == "Activo")
-                .Sum(pago => pago.Importe);
+                .Where(p => p.Estado == "Activo").Sum(p => p.Importe);
             var saldoPendiente = totalReserva - totalPagado;
 
             if (saldoPendiente <= 0)
@@ -60,17 +75,55 @@ namespace inmobiliaria.Controllers
                 return RedirectToAction(nameof(Index), new { reservaId = id });
             }
 
+            if (importe > saldoPendiente)
+            {
+                TempData["Error"] = $"El importe no puede superar el saldo pendiente ({saldoPendiente:C}).";
+                return RedirectToAction(nameof(Index), new { reservaId = id });
+            }
+
             await _pagoRepo.CrearAsync(new Pago
             {
                 ReservaId = id,
-                Concepto = $"Pago de reserva #{id}",
+                Concepto = concepto,
                 FechaPago = DateTime.Now,
-                Importe = saldoPendiente,
-                Estado = "Activo"
+                Importe = importe,
+                Estado = "Activo",
+                UsuarioCreadorId = UsuarioActualId
             });
-            TempData["Mensaje"] = "Pago realizado correctamente.";
-
+            TempData["Mensaje"] = $"Pago de {importe:C} registrado correctamente.";
             return RedirectToAction(nameof(Index), new { reservaId = id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Anular(int id, int? reservaId)
+        {
+            await _pagoRepo.AnularAsync(id, UsuarioActualId);
+            TempData["Mensaje"] = "Pago anulado correctamente.";
+            return RedirectToAction(nameof(Index), new { reservaId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditPartial(int id)
+        {
+            var pago = await _pagoRepo.ObtenerPorIdAsync(id);
+            if (pago == null) return NotFound();
+            return PartialView("_EditPartialPago", pago);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarConcepto(int id, string concepto, int? reservaId)
+        {
+            if (string.IsNullOrWhiteSpace(concepto))
+            {
+                TempData["Error"] = "El concepto no puede estar vacio.";
+                return RedirectToAction(nameof(Index), new { reservaId });
+            }
+
+            await _pagoRepo.ActualizarConceptoAsync(id, concepto);
+            TempData["Mensaje"] = "Concepto actualizado correctamente.";
+            return RedirectToAction(nameof(Index), new { reservaId });
         }
 
         private decimal CalcularTotalReserva(Reserva reserva)

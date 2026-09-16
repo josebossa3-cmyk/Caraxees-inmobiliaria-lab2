@@ -1,0 +1,18 @@
+@model inmobiliaria.Models.Pago
+
+<form asp-action="EditarConcepto" method="post">
+  @Html.AntiForgeryToken()
+  <input type="hidden" name="id" value="@Model.Id">
+  <input type="hidden" name="reservaId" value="@Model.ReservaId">
+
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Concepto</label>
+    <input type="text" name="concepto" class="form-control" value="@Model.Concepto" required>
+    <small class="text-muted">Solo se puede editar el concepto. El monto y la fecha no se modifican.</small>
+  </div>
+
+  <div class="modal-footer px-0 pb-0">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+    <button type="submit" class="btn btn-success">Guardar</button>
+  </div>
+</form>

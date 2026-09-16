@@ -219,7 +219,7 @@ namespace inmobiliaria.Controllers
             };
 
             await CargarCombos();
-            return PartialView("_Renovar", nueva);
+            return PartialView("Renovar", nueva);
         }
 
 
@@ -237,7 +237,7 @@ namespace inmobiliaria.Controllers
             reserva.ReservaRenovadaDeId = original.Id;
             ValidarFechas(reserva);
 
-            if (ModelState.IsValid && await _repo.FechaReservadaAsync(reserva.InmuebleId, reserva.FechaInicio, reserva.FechaFin))
+            if (ModelState.IsValid && await _repo.FechaReservadaAsync(reserva.InmuebleId, reserva.FechaInicio, reserva.FechaFin, original.Id))
             {
                 ModelState.AddModelError(string.Empty, "Ya existe una reserva vigente para ese inmueble en ese rango de fechas.");
             }

@@ -14,5 +14,10 @@ namespace inmobiliaria.Models
         public decimal Importe { get; set; }
 
         public string Estado { get; set; } = "Activo";
+
+        // para la auditoria
+        public int? UsuarioCreadorId { get; set; }
+        public int? UsuarioAnuladorId { get; set; }
+        public DateTime? FechaAnulacion { get; set; }
     }
 }

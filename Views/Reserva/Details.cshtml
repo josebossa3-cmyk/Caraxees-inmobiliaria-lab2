@@ -1,0 +1,183 @@
+@model Reserva
+
+@{
+    ViewData["Title"] = "Detalles de Reserva";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-1 mt-3">
+            <i class="bi bi-file-earmark-text text-info"></i> Detalles de la Reserva
+        </h1>
+        <p class="text-muted mb-0">Información completa de la reserva N° @Model.Id</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Volver al listado
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-info-subtle border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle"></i> Información general
+                </h5>
+            </div>
+            <div class="card-body py-4">
+                <dl class="row mb-0">
+                    <dt class="col-sm-6 fw-semibold">Nro de reserva</dt>
+                    <dd class="col-sm-6">@Model.Id</dd>
+
+                    <dt class="col-sm-6">Estado</dt>
+                    <dd class="col-sm-6">
+                        @{
+                            var badgeClass = Model.Estado switch
+                            {
+                                "Vigente" => "bg-success",
+                                "Finalizada" => "bg-secondary",
+                                "TerminadaAnticipadamente" => "bg-warning text-dark",
+                                _ => "bg-dark"
+                            };
+                        }
+                        <span class="badge @badgeClass">@Model.Estado</span>
+                    </dd>
+
+                    <dt class="col-sm-6 fw-semibold">Inquilino</dt>
+                    <dd class="col-sm-6">@Model.Inquilino?.NombreCompleto</dd>
+
+                    <dt class="col-sm-6 fw-semibold">Inmueble</dt>
+                    <dd class="col-sm-6">@Model.Inmueble?.Direccion</dd>
+
+                    <dt class="col-sm-6 fw-semibold">Monto por día</dt>
+                    <dd class="col-sm-6">@Model.MontoPorDia.ToString("C")</dd>
+
+                    <dt class="col-sm-6 fw-semibold">Porcentaje de reserva</dt>
+                    <dd class="col-sm-6">@Model.PorcentajeReserva %</dd>
+
+                    <dt class="col-sm-6 fw-semibold">Fecha de inicio</dt>
+                    <dd class="col-sm-6">@Model.FechaInicio.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-6 fw-semibold">Fecha de fin</dt>
+                    <dd class="col-sm-6">@Model.FechaFin.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-6">Fecha de fin original</dt>
+                    <dd class="col-sm-6">@Model.FechaFinOriginal.ToString("dd/MM/yyyy")</dd>
+
+                    @if (Model.FechaTerminacion.HasValue)
+                    {
+                        <dt class="col-sm-6 fw-semibold">Fecha de terminación</dt>
+                        <dd class="col-sm-6 text-danger">@Model.FechaTerminacion.Value.ToString("dd/MM/yyyy")</dd>
+                    }
+
+                    <dt class="col-sm-6 fw-semibold">Fecha de creación</dt>
+                    <dd class="col-sm-6 text-muted">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary-subtle border-0 py-3">
+                <h5 class="mb-0"><i class="bi bi-people"></i> Inquilino</h5>
+            </div>
+            <div class="card-body p-4">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 fw-semibold">Nombre</dt>
+                    <dd class="col-sm-8">@Model.Inquilino?.NombreCompleto</dd>
+                    <dt class="col-sm-4 fw-semibold">DNI</dt>
+                    <dd class="col-sm-8">@Model.Inquilino?.DNI</dd>
+                    <dt class="col-sm-4 fw-semibold">Teléfono</dt>
+                    <dd class="col-sm-8">@Model.Inquilino?.Telefono</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-success-subtle border-0 py-3">
+                <h5 class="mb-0"><i class="bi bi-building"></i> Inmueble</h5>
+            </div>
+            <div class="card-body p-4">
+                @if (!string.IsNullOrEmpty(Model.Inmueble?.ImagenPortada))
+                {
+                    <img src="@Model.Inmueble.ImagenPortada" alt="Inmueble" class="img-thumbnail mb-3"
+                         style="max-height: 150px;" />
+                }
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 fw-semibold">Dirección</dt>
+                    <dd class="col-sm-8">@Model.Inmueble?.Direccion</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Multa.HasValue && Model.Multa > 0)
+{
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-header bg-danger-subtle border-0 py-3">
+            <h5 class="mb-0 text-danger"><i class="bi bi-exclamation-triangle"></i> Terminación anticipada</h5>
+        </div>
+        <div class="card-body p-4">
+            @{
+                var diasTotales = (Model.FechaFinOriginal - Model.FechaInicio).Days;
+                var fechaTerm = Model.FechaTerminacion ?? DateTime.Now;
+                var diasTranscurridos = (fechaTerm - Model.FechaInicio).Days;
+                var diasRestantes = (Model.FechaFinOriginal - fechaTerm).Days;
+                if (diasRestantes < 0) diasRestantes = 0;
+                var porcentajeMulta = diasTranscurridos < diasTotales / 2.0 ? 50 : 25;
+                var saldoRestante = diasRestantes * Model.MontoPorDia;
+            }
+
+            <dl class="row mb-0">
+                <dt class="col-sm-4 fw-semibold">Días totales originales</dt>
+                <dd class="col-sm-8">@diasTotales</dd>
+
+                <dt class="col-sm-4 fw-semibold">Días transcurridos</dt>
+                <dd class="col-sm-8">@diasTranscurridos</dd>
+
+                <dt class="col-sm-4 fw-semibold">Días restantes</dt>
+                <dd class="col-sm-8">@diasRestantes</dd>
+
+                <dt class="col-sm-4 fw-semibold">Saldo restante</dt>
+                <dd class="col-sm-8">@saldoRestante.ToString("C")</dd>
+
+                <dt class="col-sm-4 fw-semibold">Porcentaje aplicado</dt>
+                <dd class="col-sm-8">@porcentajeMulta %</dd>
+
+                <dt class="col-sm-4 fw-semibold">Multa total</dt>
+                <dd class="col-sm-8">
+                    <strong class="text-danger fs-5">@Model.Multa.Value.ToString("C")</strong>
+                </dd>
+            </dl>
+        </div>
+    </div>
+}
+
+<div class="card shadow-sm border-0 mt-4">
+    <div class="card-header bg-secondary-subtle border-0 py-3">
+        <h5 class="mb-0"><i class="bi bi-shield-check"></i> Auditoría</h5>
+    </div>
+    <div class="card-body p-4">
+        <dl class="row mb-0">
+            <dt class="col-sm-4 fw-semibold">Usuario creador (ID)</dt>
+            <dd class="col-sm-8">@Model.UsuarioCreadorId</dd>
+
+            @if (Model.UsuarioTerminadorId.HasValue)
+            {
+                <dt class="col-sm-4 fw-semibold">Usuario terminador (ID)</dt>
+                <dd class="col-sm-8">@Model.UsuarioTerminadorId</dd>
+            }
+        </dl>
+    </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mt-4">
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+        <i class="bi bi-pencil">Editar</i>
+    </a>
+</div>

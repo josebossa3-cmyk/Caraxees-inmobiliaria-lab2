@@ -4,12 +4,22 @@
     ViewData["Title"] = "Reservas";
 }
 
-<h1>Reservas</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-1 mt-3">
+            <i class="bi bi-file-earmark-text text-primary"></i> Reservas
+        </h1>
+        <p class="text-muted">Gestión de reservas de alquiler temporario.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nueva Reserva
+    </a>
+</div>
 
 @if (TempData["Mensaje"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["Mensaje"]
+        <i class="bi bi-check-circle me-1"></i> @TempData["Mensaje"]
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
@@ -17,91 +27,121 @@
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        @TempData["Error"]
+        <i class="bi bi-exclamation-triangle me-1"></i> @TempData["Error"]
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Nueva Reserva</a>
-</p>
-
-<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th>Inmueble</th>
-            <th>Inquilino</th>
-            <th>Monto por día</th>
-            <th>Fecha inicio</th>
-            <th>Fecha fin</th>
-            <th>Monto Total</th> 
-            <th>Estado</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var r in Model)
-        {
-            <tr>
-                <td>
-                    <div class="d-flex align-items-center">
-                        @if (!string.IsNullOrEmpty(r.Inmueble?.ImagenPortada))
-                        {
-                            <img src="@r.Inmueble.ImagenPortada" alt="Inmueble" class="img-thumbnail me-2"
-                                style="max-width: 80px; max-height: 60px; object-fit:cover;" />
-                        }
-                        else
-                        {
-                            <span class="text-muted me-2" style="font-size: 0.8rem;">Sin imagen</span>
-                        }
-                        <span>@r.Inmueble?.Direccion</span>
-                    </div>
-                </td>
-                <td>@r.Inquilino?.NombreCompleto</td>
-                <td>@r.MontoPorDia.ToString("C")</td>
-                <td>@r.FechaInicio.ToString("dd/MM/yyyy")</td>
-                <td>@r.FechaFin.ToString("dd/MM/yyyy")</td>
-                <td>
-                    @{
-                        var dias = (r.FechaFin - r.FechaInicio).Days;
-                        var montoTotal = dias * r.MontoPorDia;
-                    }
-                    @montoTotal.ToString("C")
-                </td>
-                <td>
-                    @{
-                        var badgeClass = r.Estado switch
-                        {
-                            "Vigente" => "bg-success",
-                            "Finalizada" => "bg-secondary",
-                            "TerminadaAnticipadamente" => "bg-warning text-dark",
-                            _ => "bg-dark"
-                        };
-                    }
-                    <span class="badge @badgeClass">@r.Estado</span>
-                </td>
-                <td class="text-nowrap">
-                    <button type="button" class="btn btn-sm btn-info" onclick="loadDetailsModal(@r.Id)">Detalles</button>
-                    <button type="button" class="btn btn-sm btn-warning" onclick="loadEditModal(@r.Id)">Editar</button>
-                    @if (r.Estado == "Vigente")
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Inmueble</th>
+                        <th>Inquilino</th>
+                        <th>Monto por día</th>
+                        <th>Fecha inicio</th>
+                        <th>Fecha fin</th>
+                        <th>Monto Total</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
                     {
-                        <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#terminarModal"
-                                data-id="@r.Id"
-                                data-info="@($"{r.Inquilino?.NombreCompleto} - {r.Inmueble?.Direccion}")">
-                            Terminar
-                        </button>
-                        <button type="button" class="btn btn-sm btn-success" onclick="loadRenovarModal(@r.Id)">Renovar</button>
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox fs-3 d-block mb-2"></i> No se encontraron reservas.
+                            </td>
+                        </tr>
                     }
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                            data-id="@r.Id"
-                            data-info="@($"{r.Inquilino?.NombreCompleto} - {r.Inmueble?.Direccion} ({r.FechaInicio:dd/MM/yyyy} al {r.FechaFin:dd/MM/yyyy})")">
-                        Eliminar
-                    </button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                    else
+                    {
+                        @foreach (var r in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(r.Inmueble?.ImagenPortada))
+                                        {
+                                            <img src="@r.Inmueble.ImagenPortada" alt="Inmueble" class="rounded shadow-sm me-2"
+                                                 style="max-width: 60px; max-height: 45px; object-fit:cover;" />
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-muted me-2">Sin imagen</span>
+                                        }
+                                        <span class="fw-semibold">@r.Inmueble?.Direccion</span>
+                                    </div>
+                                </td>
+                                <td>@r.Inquilino?.NombreCompleto</td>
+                                <td>@r.MontoPorDia.ToString("C")</td>
+                                <td>@r.FechaInicio.ToString("dd/MM/yyyy")</td>
+                                <td>@r.FechaFin.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @{
+                                        var dias = (r.FechaFin - r.FechaInicio).Days;
+                                        var montoTotal = dias * r.MontoPorDia;
+                                    }
+                                    @montoTotal.ToString("C")
+                                </td>
+                                <td>
+                                    @{
+                                        var badgeClass = r.Estado switch
+                                        {
+                                            "Vigente" => "bg-success",
+                                            "Finalizada" => "bg-secondary",
+                                            "TerminadaAnticipadamente" => "bg-warning text-dark",
+                                            _ => "bg-dark"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@r.Estado</span>
+                                </td>
+                                <td class="text-end text-nowrap">
+                                    <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-sm btn-info" title="Detalles">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@r.Id" class="btn btn-sm btn-warning" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    @if (r.Estado == "Vigente")
+                                    {
+                                        <form asp-action="Terminar" asp-route-id="@r.Id" method="post" class="d-inline"
+                                              onsubmit="return confirm('¿Terminar esta reserva? Se calculará la multa si corresponde.');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Terminar">
+                                                <i class="bi bi-x-octagon"></i>
+                                            </button>
+                                        </form>
+
+                                        <a asp-action="Renovar" asp-route-id="@r.Id" class="btn btn-sm btn-success"
+                                           title="Renovar"><i class="bi bi-arrow-repeat"></i>
+                                        </a>
+                                    }
+
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@r.Id"
+                                            data-info="@($"{r.Inquilino?.NombreCompleto} - {r.Inmueble?.Direccion} ({r.FechaInicio:dd/MM/yyyy} al {r.FechaFin:dd/MM/yyyy})")">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card-footer bg-white">
+        <small class="text-muted">Mostrando @Model.Count reservas</small>
+    </div>
+</div>
+
+
 
 <!--  modal para detalles de reserva -->
 <div class="modal fade" id="modalDetalles" tabindex="-1" aria-labelledby="modalDetallesLabel" aria-hidden="true">
@@ -112,7 +152,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body" id="modalDetallesBody">
-                <div class="text-center py-3"><div class="spinner-border text-info" role="status"></div></div>
+                <div class="text-center py-3">
+                    <div class="spinner-border text-info" role="status"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -127,7 +169,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body" id="editModalBody">
-                <div class="text-center py-3"><div class="spinner-border text-warning" role="status"></div></div>
+                <div class="text-center py-3">
+                    <div class="spinner-border text-warning" role="status"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -142,7 +186,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body" id="renovarModalBody">
-                <div class="text-center py-3"><div class="spinner-border text-success" role="status"></div></div>
+                <div class="text-center py-3">
+                    <div class="spinner-border text-success" role="status"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -176,18 +222,26 @@
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirmar eliminacion</h5>
+            <div class="modal-header bg-danger-subtle">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle"></i> Confirmar eliminacion
+                </h5>
                 <button type="button" data-bs-dismiss="modal" class="btn-close" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">Estas seguro de eliminar la Reserva <strong id="reservaInfo"></strong>?
+                <br>
+                <small class="text-muted">Esta acción no se puede deshacer.</small>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form asp-action="Delete" id="deleteForm" method="post">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <form asp-action="Delete" id="deleteForm" method="post" class="d-inline">
                     @Html.AntiForgeryToken()
                     <input type="hidden" id="reservaId" name="id">
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
                 </form>
             </div>
         </div>
@@ -196,59 +250,6 @@
 
 @section Scripts {
     <script>
-        function loadDetailsModal(id) {
-            document.getElementById('modalDetallesBody').innerHTML = '<div class="text-center py-3"><div class="spinner-border text-info" role="status"></div></div>';
-            var modal = new bootstrap.Modal(document.getElementById('modalDetalles'));
-            modal.show();
-            fetch('/Reserva/DetailsPartial/' + id)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('modalDetallesBody').innerHTML = html;
-                })
-                .catch(error => {
-                    document.getElementById('modalDetallesBody').innerHTML = '<div class="alert alert-danger">Error al cargar los detalles.</div>';
-                });
-        }
-
-        function loadEditModal(id) {
-            document.getElementById('editModalBody').innerHTML = '<div class="text-center py-3"><div class="spinner-border text-warning" role="status"></div></div>';
-            var modal = new bootstrap.Modal(document.getElementById('editModal'));
-            modal.show();
-            fetch('/Reserva/EditPartial/' + id)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('editModalBody').innerHTML = html;
-                })
-                .catch(error => {
-                    document.getElementById('editModalBody').innerHTML = '<div class="alert alert-danger">Error al cargar el formulario.</div>';
-                });
-        }
-
-        function loadRenovarModal(id) {
-            document.getElementById('renovarModalBody').innerHTML = '<div class="text-center py-3"><div class="spinner-border text-success" role="status"></div></div>';
-            var modal = new bootstrap.Modal(document.getElementById('renovarModal'));
-            modal.show();
-            fetch('/Reserva/RenovarPartial/' + id)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('renovarModalBody').innerHTML = html;
-                })
-                .catch(error => {
-                    document.getElementById('renovarModalBody').innerHTML = '<div class="alert alert-danger">Error al cargar el formulario.</div>';
-                });
-        }
-
-        // Script modal terminar
-        var terminarModal = document.getElementById('terminarModal');
-        terminarModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var id = button.getAttribute('data-id');
-            var info = button.getAttribute('data-info');
-            document.getElementById('terminarReservaId').value = id;
-            document.getElementById('terminarReservaInfo').textContent = info;
-            document.getElementById('terminarForm').action = '/Reserva/Terminar/' + id;
-        });
-
         // Script modal eliminar
         var deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', function (event) {
