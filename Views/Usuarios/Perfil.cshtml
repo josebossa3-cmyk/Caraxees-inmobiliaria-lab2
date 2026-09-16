@@ -4,36 +4,122 @@
     ViewData["Title"] = "Mi Perfil";
 }
 
-<h1>Mi Perfil</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-1 mt-3"><i class="bi bi-person-circle text-primary"></i> Mi Perfil</h1>
+        <p class="text-muted mb-0">Actualizá tus datos personales y tu avatar.</p>
+    </div>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Volver al inicio
+    </a>
+</div>
 
-@if (!string.IsNullOrEmpty(Model.Avatar))
+@if (TempData["Mensaje"] != null)
 {
-    <img src="@Model.Avatar" alt="Avatar" style="width:120px;height:120px;object-fit:cover;border-radius:50%;" class="mb-3" />
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-1"></i> @TempData["Mensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 }
 
-<form asp-action="Perfil" method="post" enctype="multipart/form-data">
-    @Html.AntiForgeryToken()
-
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input value="@Model.Email" class="form-control" disabled />
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-1"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
+}
 
-    <div class="mb-3">
-        <label asp-for="NombreCompleto" class="form-label"></label>
-        <input asp-for="NombreCompleto" class="form-control" />
-        <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary-subtle border-0 py-3">
+                <h5 class="mb-0"><i class="bi bi-person-vcard"></i> Datos personales</h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Perfil" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="text-center mb-4">
+                        @if (!string.IsNullOrEmpty(Model.Avatar))
+                        {
+                            <img src="@Model.Avatar" alt="Avatar"
+                                 style="width: 120px; height:120px; object-fit:cover; border-radius:50%;"
+                                 class="shadow-sm border" />
+                        }
+                        else
+                        {
+                            <i class="bi bi-person-circle text-muted" style="font-size: 120px;"></i>
+                        }
+                        <p class="text-muted small mt-2 mb-0">Avatar actual</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-envelope text-muted me-1"></i> Email
+                            </label>
+                            <input type="text" value="@Model.Email" class="form-control bg-light" disabled>
+                            <small class="text-muted">El email no se puede modificar.</small>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-shield-lock text-muted me-1"></i> Rol
+                            </label>
+                            <input type="text" value="@Model.Rol" class="form-control bg-light" disabled>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NombreCompleto" class="form-label fw-semibold">
+                                <i class="bi bi-person text-muted me-1"></i> Nombre completo
+                            </label>
+                            <input asp-for="NombreCompleto" class="form-control">
+                            <span asp-validation-for="NombreCompleto" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-image text-muted me-1"></i> Cambiar avatar
+                            </label>
+                            <input asp-for="AvatarFile" type="file" class="form-control" accept="image/*" />
+                            <small class="text-muted">Formato permitidos: JPG, PNG, GIF.</small>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Guardar cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-warning-subtle border-0 py-3">
+                <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Seguridad</h5>
+            </div>
+            <div class="card-body p-4">
+                <p class="mb-3 text-muted">
+                    Podes cambiar tu contraseña en cualquier momento.
+                </p>
+                <a asp-action="CambiarPassword" class="btn btn-warning">
+                    <i class="bi bi-key"></i> Cambiar contraseña
+                </a>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label class="form-label">Avatar</label>
-        <input asp-for="AvatarFile" type="file" class="form-control" accept="image/*" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Guardar cambios</button>
-</form>
-
-<hr />
-<a asp-action="CambiarPassword" class="btn btn-outline-secondary">Cambiar contraseña</a>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
