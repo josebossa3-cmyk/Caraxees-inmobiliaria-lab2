@@ -1,0 +1,112 @@
+@model inmobiliaria.Models.Usuario
+
+@{
+  ViewData["Title"] = "Editar Usuario";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1 mt-3">
+      <i class="bi bi-pencil-square text-warning"></i> Editar Usuario
+    </h1>
+    <p class="text-muted mb-0">Modificá los datos del usuario.</p>
+  </div>
+  <a asp-action="Index" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left"></i> Volver al listado
+  </a>
+</div>
+
+@if (TempData["Error"] != null)
+{
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle me-1"></i> @TempData["Error"]
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+}
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-warning-subtle border-0 py-3">
+        <h5 class="mb-0"><i class="bi bi-person-vcard"></i> Datos del usuario
+        </h5>
+      </div>
+
+      <div class="card-body p-4">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+          @Html.AntiForgeryToken()
+          <input type="hidden" asp-for="Id">
+          <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+          <div class="text-center mb-4">
+            @if (!string.IsNullOrEmpty(Model.Avatar))
+            {
+              <img src="@Model.Avatar" alt="Avatar"
+                   style="width: 120px; height:120px; object-fit:cover; border-radius:50%;" class="shadow-sm border" />
+            }
+            else
+            {
+              <i class="bi bi-person-circle text-muted" style="font-size: 120px;"></i>
+            }
+            <p class="text-muted small mt-2 mb-0">Avatar actual</p>
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-6 mb-3">
+              <label for="" class="form-label fw-semibold">
+                <i class="bi bi-envelope text-muted me-1"></i> Email
+              </label>
+              <input value="@Model.Email" class="form-control bg-light" disabled>
+              <small class="text-muted">El email no se puede modificar.</small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label asp-for="NombreCompleto" class="form-label fw-semibold">
+                <i class="bi bi-person text-muted me-1"></i> Nombre completo
+              </label>
+              <input asp-for="NombreCompleto" class="form-control">
+              <span asp-validation-for="NombreCompleto" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label asp-for="Rol" class="form-label fw-semibold">
+                <i class="bi bi-shield-lock text-muted me-1"></i> Rol
+              </label>
+              <select asp-for="Rol" class="form-select">
+                <option value="Empleado">Empleado</option>
+                <option value="Administrador">Administrador</option>
+              </select>
+              <span asp-validation-for="Rol" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">
+                <i class="bi bi-image text-muted me-1"></i> Cambiar avatar
+              </label>
+              <input type="file" name="avatarFile" class="form-control" accept="image/*">
+              <small class="text-muted">Formatos: JPG, PNG, GIF.</small>
+            </div>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="d-flex justify-content-end gap-2">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+              <i class="bi bi-x-circle"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-check-circle"></i> Guardar cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
+}

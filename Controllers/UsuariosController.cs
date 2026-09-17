@@ -218,5 +218,67 @@ namespace inmobiliaria.Controllers
             return RedirectToAction(nameof(Perfil));
         }
 
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var usuario = await _repo.ObtenerPorIdAsync(id);
+            if (usuario == null) return NotFound();
+            return View(usuario);
+        }
+
+        [Authorize(Roles = "Administrador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Usuario usuario, IFormFile? avatarFile)
+        {
+            if (id != usuario.Id) return NotFound();
+
+            var usuarioDb = await _repo.ObtenerPorIdAsync(id);
+            if (usuarioDb == null) return NotFound();
+
+            // el email no lo vamos a cambiar, validamos de que no hay otro igual
+            if (string.IsNullOrWhiteSpace(usuario.NombreCompleto))
+            {
+                ModelState.AddModelError(nameof(Usuario.NombreCompleto), "El nombre es obligatorio.");
+            }
+
+            if (usuario.Rol != "Administrador" && usuario.Rol != "Empleado")
+            {
+                ModelState.AddModelError(nameof(Usuario.Rol), "Rol inválido.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                usuario.Email = usuarioDb.Email;
+                usuario.Avatar = usuarioDb.Avatar;
+                return View(usuario);
+            }
+
+            usuarioDb.NombreCompleto = usuario.NombreCompleto;
+            usuarioDb.Rol = usuario.Rol;
+
+            // opcional el avatar
+            if (avatarFile != null && avatarFile.Length > 0)
+            {
+                var wwwPath = _environment.WebRootPath;
+                var carpeta = Path.Combine(wwwPath, "uploads");
+                if (!Directory.Exists(carpeta)) Directory.CreateDirectory(carpeta);
+
+                var nombreArchivo = $"avatar_{id}{Path.GetExtension(avatarFile.FileName)}";
+                var rutaCompleta = Path.Combine(carpeta, nombreArchivo);
+
+                using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+                {
+                    await avatarFile.CopyToAsync(stream);
+                }
+
+                usuarioDb.Avatar = "/uploads/" + nombreArchivo;
+            }
+
+            await _repo.ActualizarAsync(usuarioDb);
+
+            TempData["Mensaje"] = "Usuario actualizado correctamente";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
