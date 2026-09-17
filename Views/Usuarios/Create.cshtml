@@ -62,18 +62,6 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="" class="form-label fw-semibold">
-                            <i class="bi bi-shield-lock text-muted me-1"></i> Rol
-                        </label>
-                        <select asp-for="Rol" class="form-select">
-                            <option value="">Seleccione un Rol</option>
-                            <option value="Administrador">Administrador</option>
-                            <option value="Empleado">Empleado</option>
-                        </select>
-                        <span asp-validation-for="Rol" class="text-danger small"></span>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label for="" class="form-label fw-semibold">
                             <i class="bi bi-image text-muted me-1"></i> Avatar (opcional)
                         </label>
                         <input type="file" asp-for="AvatarFile" accept="image/*" class="form-control">
