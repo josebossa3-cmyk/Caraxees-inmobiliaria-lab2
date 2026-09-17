@@ -22,29 +22,44 @@
     <div class="card shadow-sm border-0">
       <div class="card-header bg-info-subtle border-0 py-3">
         <h5 class="mb-0">
-          <i class="bi-person-badge"></i> @Model.NombreCompleto
+          <i class="bi bi-person-badge"></i> @Model.NombreCompleto
         </h5>
       </div>
 
       <div class="card-body p-4">
+        <div class="text-center mb-4">
+          @if (!string.IsNullOrEmpty(Model.Avatar))
+          {
+            <img src="@Model.Avatar" alt="Avatar" style="width: 120px; height:120px; object-fit:cover; border-radius:50%;"
+                 class="shadow-sm bordeer" />
+          }
+          else
+          {
+            <i class="bi bi-person-circle text-muted" style="font-size: 120px;"></i>
+          }
+        </div>
+
         <dl class="row mb-0">
           <dt class="col-sm-4 fw-semibold">
             <i class="bi bi-envelope text-muted me-1"></i> Email
           </dt>
-          <dd class="col-sm-8">           
-              <a href="mailto:@Model.Email">@Model.Email</a>
+          <dd class="col-sm-8">
+            <a href="mailto:@Model.Email">@Model.Email</a>
           </dd>
 
           <dt class="col-sm-4 fw-semibold">
-            <i class="bi bi-person text-muted me-1"> Nombre completo</i>
+            <i class="bi bi-person text-muted me-1"></i> Nombre completo
           </dt>
           <dd class="col-sm-8">@Model.NombreCompleto</dd>
 
           <dt class="col-sm-4 fw-semibold">
-            <i class="bi bi-geo-alt text-muted me-1"></i> Rol
+            <i class="bi bi-shield-lock text-muted me-1"></i> Rol
           </dt>
           <dd class="col-sm-8">
-              @Model.Rol
+            @{
+              var badgeRol = Model.Rol == "Administrador" ? "bg-primary" : "bg-secondary";
+            }
+            <span class="badge @badgeRol">@Model.Rol</span>
           </dd>
 
           <dt class="col-sm-4 fw-semibold">
@@ -58,6 +73,12 @@
         <a asp-action="Index" class="btn btn-outline-secondary">
           <i class="bi bi-arrow-left"></i> Volver
         </a>
+        @if (ViewContext.HttpContext.User.IsInRole("Administrador"))
+        {
+          <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Editar
+          </a>
+        }
       </div>
     </div>
   </div>

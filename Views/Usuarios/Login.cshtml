@@ -2,26 +2,70 @@
 
 @{
     ViewData["Title"] = "Iniciar Sesión";
+    Layout = "_Layout";
 }
 
-<h1>Iniciar Sesión</h1>
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-6 col-lg-5">
+        <div class="text-center mb-4">
+            <i class="bi bi-building text-primary" style="font-size: 3rem;"></i>
+            <h1 class="h3 mt-2 mb-0">Inmobiliaria Caraxes</h1>
+            <p class="text-muted">Iniciá sesión para acceder al sistema.</p>
+        </div>
 
-<form asp-action="Login" method="post">
-    @Html.AntiForgeryToken()
+        <div class="card shadow-sm boder-0">
+            <div class="card-header bg-primary-subtle border-0 py-3">
+                <h5 class="mb-0 text-center">
+                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                </h5>
+            </div>
+        </div>
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="card-body p-4">
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
 
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label fw-semibold">
+                        <i class="bi bi-envelope text-muted me-1"></i> Email
+                    </label>
+                    <input asp-for="Email" class="form-control" placeholder="correo@ejemplo.com" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label fw-semibold">
+                        <i class="bi bi-key text-muted me-1"></i> Contraseña
+                    </label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="*********" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-in-right"></i> Ingresar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-footer bg-white text-center py-3">
+            <small class="text-muted">
+                ¿No tenés cuenta?
+                <a asp-action="Create">Registrate acá</a>
+            </small>
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Password" class="form-label">Contraseña</label>
-        <input asp-for="Password" type="password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
+    <p class="text-center text-muted small mt-3 mb-0">
+        Sistema de gestión de alquileres temporarios
+    </p>
+</div>
 
-    <button type="submit" class="btn btn-primary">Ingresar</button>
-</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
