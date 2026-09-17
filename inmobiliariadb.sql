@@ -16,7 +16,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
-CREATE DATABASE IF NOT EXISTS `inmobilariadb` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE DATABASE IF NOT EXISTS `inmobilariadb` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `inmobilariadb`;
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -38,7 +38,7 @@ CREATE TABLE `imagenesinmueble` (
   PRIMARY KEY (`Id`),
   KEY `FK_ImagenesInmueble_Inmuebles` (`InmuebleId`),
   CONSTRAINT `FK_ImagenesInmueble_Inmuebles` FOREIGN KEY (`InmuebleId`) REFERENCES `inmuebles` (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75,7 +75,7 @@ CREATE TABLE `inmuebles` (
   KEY `FK_Inmuebles_TiposInmueble` (`TipoInmuebleId`),
   CONSTRAINT `FK_Inmuebles_Propietarios` FOREIGN KEY (`PropietarioId`) REFERENCES `propietarios` (`Id`),
   CONSTRAINT `FK_Inmuebles_TiposInmueble` FOREIGN KEY (`TipoInmuebleId`) REFERENCES `tiposinmueble` (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +105,7 @@ CREATE TABLE `inquilinos` (
   `FechaAlta` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `DNI` (`DNI`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,7 +143,7 @@ CREATE TABLE `pagos` (
   CONSTRAINT `FK_Pagos_UsuariosAnulador` FOREIGN KEY (`UsuarioAnuladorId`) REFERENCES `usuarios` (`Id`),
   CONSTRAINT `FK_Pagos_UsuariosCreador` FOREIGN KEY (`UsuarioCreadorId`) REFERENCES `usuarios` (`Id`),
   CONSTRAINT `pagos_chk_1` CHECK ((`Estado` in (_utf8mb4'Activo',_utf8mb4'Anulado')))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +172,7 @@ CREATE TABLE `propietarios` (
   `FechaAlta` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `DNI` (`DNI`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -221,7 +221,7 @@ CREATE TABLE `reservas` (
   CONSTRAINT `FK_Reservas_UsuariosTerminador` FOREIGN KEY (`UsuarioTerminadorId`) REFERENCES `usuarios` (`Id`),
   CONSTRAINT `CK_Reservas_Fechas` CHECK ((`FechaFin` > `FechaInicio`)),
   CONSTRAINT `reservas_chk_1` CHECK ((`Estado` in (_utf8mb4'Vigente',_utf8mb4'Finalizada',_utf8mb4'TerminadaAnticipadamente')))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -245,7 +245,7 @@ CREATE TABLE `tiposinmueble` (
   `Nombre` varchar(50) NOT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Nombre` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -276,7 +276,7 @@ CREATE TABLE `usuarios` (
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Email` (`Email`),
   CONSTRAINT `usuarios_chk_1` CHECK ((`Rol` in (_utf8mb4'Administrador',_utf8mb4'Empleado')))
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
