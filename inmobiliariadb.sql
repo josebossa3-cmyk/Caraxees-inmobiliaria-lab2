@@ -15,6 +15,13 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+
+CREATE DATABASE IF NOT EXISTS `inmobilariadb` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `inmobilariadb`;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+
 --
 -- Table structure for table `imagenesinmueble`
 --
@@ -278,7 +285,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'admin@inmobiliaria.com','AQAAAAEAACcQAAAAE...','Administrador General',NULL,'Administrador','2026-08-13 17:24:25'),(2,'empleado@inmobiliaria.com','AQAAAAEAACcQAAAAE...','Empleado Demo',NULL,'Empleado','2026-08-13 17:24:25');
+INSERT INTO `usuarios` VALUES (1,'admin@inmobiliaria.com','$2a$11$8PzARh2ATceDI72N2xPbA.BHHSqBrKSUuZaXEBbjr5xX..4iYVW3e','Administrador General',NULL,'Administrador','2026-08-13 17:24:25'),(2,'empleado@inmobiliaria.com','$2a$11$QItNwJYBxtt6n4CW9to9wuUirOpA0jQdhuuI/5synl93KY8UAaore','Empleado Demo',NULL,'Empleado','2026-08-13 17:24:25');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
