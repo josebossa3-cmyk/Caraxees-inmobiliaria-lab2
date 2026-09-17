@@ -26,7 +26,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div class="container-fluid px-3">
-                <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex -align-items-center gap-2">
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center gap-2">
                     <i class="bi bi-building fs-4 text-warning"></i>
                     <span class="fw-bold">Caraxes Inmobiliaria</span>
                 </a>
@@ -48,7 +48,7 @@
                         @if (isAuth && role=="Administrador")
                         {
                         <li class="nav-item">
-                            <a class="nav-link@(currentController == "Usuarios" ? "active" : "")"
+                            <a class="nav-link @(currentController == "Usuarios" ? "active" : "")"
                                asp-controller="Usuarios" asp-action="Index">
                                 <i class="bi bi-person-fill me-1"></i> Usuarios
                             </a>
@@ -73,7 +73,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link nav-pill @(currentController == "Reserva" ? "active" : "")"
+                            <a class="nav-link @(currentController == "Reserva" ? "active" : "")"
                                asp-controller="Reserva" asp-action="Index">
                                 <i class="bi bi-file-earmark-text me-1"></i> Reservas
                             </a>
@@ -121,11 +121,8 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Usuarios" asp-action="Login">
-                                    <i class="bi bi-box arrow-in-right me-1"></i> Iniciar sesión
+                                    <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Usuarios" asp-action="Create">Registrarse</a>
                             </li>
                         }
                     </ul>
