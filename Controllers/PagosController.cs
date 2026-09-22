@@ -12,7 +12,14 @@ namespace inmobiliaria.Controllers
     {
         private readonly ReservaRepository _reservaRepo;
         private readonly PagoRepository _pagoRepo;
-        private const int UsuarioActualId = 1;
+        private int UsuarioActualId
+        {
+            get
+            {
+                var idClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                return int.TryParse(idClaim, out var id) ? id : 0;
+            }
+        }
 
         public PagosController(ReservaRepository reservaRepo, PagoRepository pagoRepo)
         {

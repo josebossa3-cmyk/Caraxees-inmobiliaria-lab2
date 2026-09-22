@@ -14,7 +14,12 @@ namespace inmobiliaria.Controllers
         private readonly InquilinoRepository _inquilinoRepo;
         private readonly InmuebleRepository _inmuebleRepo;
 
-        private const int UsuarioActualId = 1;
+        private int UsuarioActualId {
+            get {
+                var idClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                return int.TryParse(idClaim, out var id) ? id : 0;
+            }
+        }
 
         public ReservaController(ReservaRepository repo, InquilinoRepository inquilinoRepo, InmuebleRepository inmuebleRepo)
         {
