@@ -101,10 +101,13 @@
                                             onclick="loadEditModal(@item.Id)">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar" data-bs-toggle="modal"
-                                            data-bs-target="#deleteModal" data-id="@item.Id" data-nombre="@item.NombreCompleto">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                    @if (User.IsInRole("Administrador"))
+                                    {   
+                                        <button type="button" class="btn btn-sm btn-danger" title="Eliminar" data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal" data-id="@item.Id" data-nombre="@item.NombreCompleto">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    }
                                 </td>
                             </tr>
                         }

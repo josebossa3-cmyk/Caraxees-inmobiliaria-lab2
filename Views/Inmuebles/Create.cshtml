@@ -35,7 +35,7 @@
               <label asp-for="PropietarioId" class="form-label fw-semibold">
                 <i class="bi bi-person-badge text-muted me-1"></i> Propietario
               </label>
-              <select asp-for="PropietarioId" asp-items="ViewBag.Propietario" class="form-select">
+              <select asp-for="PropietarioId" asp-items="ViewBag.Propietario" class="form-select select2">
                 <option value="">-- Seleccione Propietario --</option>
               </select>
               <span asp-validation-for="PropietarioId" class="text-danger small"></span>
@@ -45,7 +45,7 @@
               <label asp-for="TipoInmuebleId" class="form-label fw-semibold">
                 <i class="bi bi-tags text-muted me-1"></i> Tipo de inmueble
               </label>
-              <select asp-for="TipoInmuebleId" asp-items="ViewBag.TiposInmueble" class="form-select">
+              <select asp-for="TipoInmuebleId" asp-items="ViewBag.TiposInmueble" class="form-select select2">
                 <option value="">-- Seleccione Tipo --</option>
               </select>
               <span asp-validation-for="TipoInmuebleId" class="text-danger small"></span>
@@ -192,5 +192,15 @@
           });
         }
       }
+
+      $(document).ready(function (){
+        $('.select2').select2({
+          theme: 'bootstrap-5',
+          language: 'es',
+          width: '100%',
+          placeholder: '-- Seleccione --',
+          allowClear: true
+        });
+      });
     </script>
   }

@@ -37,7 +37,7 @@
                 <i class="bi bi-people text-muted me-1"></i> Inquilino
               </label>
               <select asp-for="InquilinoId" asp-items="@(new SelectList(ViewBag.Inquilinos, "Id", "NombreCompleto"))"
-                      class="form-select">
+                      class="form-select select2">
                 <option value="">Seleccione un Inquilino</option>
               </select>
               <span asp-validation-for="InquilinoId" class="text-danger small"></span>
@@ -48,7 +48,7 @@
                 <i class="bi bi-building text-muted me-1"></i> Inmueble
               </label>
               <select asp-for="InmuebleId" asp-items="@(new SelectList(ViewBag.Inmuebles, "Id", "Direccion"))"
-                      class="form-select" id="InmuebleId">
+                      class="form-select select2" id="InmuebleId">
                 <option value="">Seleccione un Inmueble</option>
               </select>
               <span asp-validation-for="InmuebleId" class="text-danger small"></span>
@@ -124,6 +124,16 @@
           porcentajeInput.value = data.porcentajeReserva;
         })
         .catch(error => console.error('Error al obtener datos del inmueble:', error));
+    });
+
+    $(document).ready(function () {
+      $('.select2').select2({
+        theme: 'bootstrap-5',
+        language: 'es',
+        width: '100%',
+        placeholder: '-- Seleccione --',
+        allowClear: true
+      });
     });
   </script>
 }

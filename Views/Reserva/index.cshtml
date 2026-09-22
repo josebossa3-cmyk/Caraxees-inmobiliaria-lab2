@@ -121,12 +121,14 @@
                                            title="Renovar"><i class="bi bi-arrow-repeat"></i>
                                         </a>
                                     }
-
+                                    @if (User.IsInRole("Administrador"))
+                                    {   
                                     <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar"
                                             data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@r.Id"
                                             data-info="@($"{r.Inquilino?.NombreCompleto} - {r.Inmueble?.Direccion} ({r.FechaInicio:dd/MM/yyyy} al {r.FechaFin:dd/MM/yyyy})")">
                                         <i class="bi bi-trash"></i>
                                     </button>
+                                    }
                                 </td>
                             </tr>
                         }

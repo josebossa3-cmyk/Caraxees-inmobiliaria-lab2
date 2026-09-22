@@ -103,6 +103,7 @@ namespace inmobiliaria.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Anular(int id, int? reservaId)
         {
             await _pagoRepo.AnularAsync(id, UsuarioActualId);

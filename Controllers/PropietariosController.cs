@@ -91,6 +91,7 @@ namespace inmobiliaria.Controllers
     //post propietario delete
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
       await _repo.EliminarAsync(id);

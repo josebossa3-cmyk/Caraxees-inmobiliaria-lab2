@@ -23,10 +23,14 @@ namespace inmobiliaria.Models
 
             var query = @"SELECT r.Id, r.InquilinoId, r.InmuebleId, r.FechaInicio, r.FechaFin, r.FechaFinOriginal, r.MontoPorDia, r.PorcentajeReserva, r.Estado, r.FechaTerminacion, r.Multa, r.ReservaRenovadaDeId, r.UsuarioCreadorId, r.UsuarioTerminadorId, r.FechaCreacion,
                                 inq.Id AS InqId, inq.DNI AS InqDNI, inq.NombreCompleto AS InqNombreCompleto, inq.Telefono AS InqTelefono, inq.Email AS InqEmail, inq.Direccion AS InqDireccion, inq.FechaAlta AS InqFechaAlta,
-                                imm.Id AS ImmId, imm.PropietarioId AS ImmPropietarioId, imm.TipoInmuebleId AS ImmTipoInmuebleId, imm.Direccion AS ImmDireccion, imm.Cupo AS ImmCupo, imm.PrecioPorDia AS ImmPrecioPorDia, imm.PorcentajeReserva AS ImmPorcentajeReserva, imm.Estado AS ImmEstado, imm.Coordenadas AS ImmCoordenadas, imm.ImagenPortada AS ImmImagenPortada, imm.FechaAlta AS ImmFechaAlta
+                                imm.Id AS ImmId, imm.PropietarioId AS ImmPropietarioId, imm.TipoInmuebleId AS ImmTipoInmuebleId, imm.Direccion AS ImmDireccion, imm.Cupo AS ImmCupo, imm.PrecioPorDia AS ImmPrecioPorDia, imm.PorcentajeReserva AS ImmPorcentajeReserva, imm.Estado AS ImmEstado, imm.Coordenadas AS ImmCoordenadas, imm.ImagenPortada AS ImmImagenPortada, imm.FechaAlta AS ImmFechaAlta,
+                                uc.NombreCompleto AS UsuarioCreadorNombre, uc.Email AS UsuarioCreadorEmail,
+                                ut.NombreCompleto AS UsuarioTerminadorNombre, ut.Email AS UsuarioTerminadorEmail
                         FROM reservas r
                         LEFT JOIN inquilinos inq ON r.InquilinoId = inq.Id
-                        LEFT JOIN inmuebles imm ON r.InmuebleId = imm.Id";
+                        LEFT JOIN inmuebles imm ON r.InmuebleId = imm.Id
+                        LEFT JOIN usuarios uc ON r.UsuarioCreadorId = uc.Id
+                        LEFT JOIN usuarios ut ON r.UsuarioTerminadorId = ut.Id";
             using var command = new MySqlCommand(query, connection);
             using var reader = await command.ExecuteReaderAsync();
 
@@ -72,7 +76,11 @@ namespace inmobiliaria.Models
                         Coordenadas = reader.IsDBNull(reader.GetOrdinal("ImmCoordenadas")) ? null : reader.GetString("ImmCoordenadas"),
                         ImagenPortada = reader.IsDBNull(reader.GetOrdinal("ImmImagenPortada")) ? null : reader.GetString("ImmImagenPortada"),
                         FechaAlta = reader.GetDateTime("ImmFechaAlta")
-                    }
+                    },
+                    UsuarioCreadorNombre = reader.IsDBNull(reader.GetOrdinal("UsuarioCreadorNombre")) ? null : reader.GetString("UsuarioCreadorNombre"),
+                    UsuarioCreadorEmail = reader.IsDBNull(reader.GetOrdinal("UsuarioCreadorEmail")) ? null : reader.GetString("UsuarioCreadorEmail"),
+                    UsuarioTerminadorNombre = reader.IsDBNull(reader.GetOrdinal("UsuarioTerminadorNombre")) ? null : reader.GetString("UsuarioTerminadorNombre"),
+                    UsuarioTerminadorEmail = reader.IsDBNull(reader.GetOrdinal("UsuarioTerminadorEmail")) ? null : reader.GetString("UsuarioTerminadorEmail"),
                 });
             }
 
@@ -85,10 +93,14 @@ namespace inmobiliaria.Models
             await connection.OpenAsync();
             var query = @"SELECT r.Id, r.InquilinoId, r.InmuebleId, r.FechaInicio, r.FechaFin, r.FechaFinOriginal, r.MontoPorDia, r.PorcentajeReserva, r.Estado, r.FechaTerminacion, r.Multa, r.ReservaRenovadaDeId, r.UsuarioCreadorId, r.UsuarioTerminadorId, r.FechaCreacion,
                                 inq.Id AS InqId, inq.DNI AS InqDNI, inq.NombreCompleto AS InqNombreCompleto, inq.Telefono AS InqTelefono, inq.Email AS InqEmail, inq.Direccion AS InqDireccion, inq.FechaAlta AS InqFechaAlta,
-                                imm.Id AS ImmId, imm.PropietarioId AS ImmPropietarioId, imm.TipoInmuebleId AS ImmTipoInmuebleId, imm.Direccion AS ImmDireccion, imm.Cupo AS ImmCupo, imm.PrecioPorDia AS ImmPrecioPorDia, imm.PorcentajeReserva AS ImmPorcentajeReserva, imm.Estado AS ImmEstado, imm.Coordenadas AS ImmCoordenadas, imm.ImagenPortada AS ImmImagenPortada, imm.FechaAlta AS ImmFechaAlta
+                                imm.Id AS ImmId, imm.PropietarioId AS ImmPropietarioId, imm.TipoInmuebleId AS ImmTipoInmuebleId, imm.Direccion AS ImmDireccion, imm.Cupo AS ImmCupo, imm.PrecioPorDia AS ImmPrecioPorDia, imm.PorcentajeReserva AS ImmPorcentajeReserva, imm.Estado AS ImmEstado, imm.Coordenadas AS ImmCoordenadas, imm.ImagenPortada AS ImmImagenPortada, imm.FechaAlta AS ImmFechaAlta,
+                                uc.NombreCompleto AS UsuarioCreadorNombre, uc.Email AS UsuarioCreadorEmail,
+                                ut.NombreCompleto AS UsuarioTerminadorNombre, ut.Email AS UsuarioTerminadorEmail
                         FROM reservas r
                         LEFT JOIN inquilinos inq ON r.InquilinoId = inq.Id
                         LEFT JOIN inmuebles imm ON r.InmuebleId = imm.Id
+                        LEFT JOIN usuarios uc ON r.UsuarioCreadorId = uc.Id
+                        LEFT JOIN usuarios ut ON r.UsuarioTerminadorId = ut.Id
                         WHERE r.Id = @Id";
             using var command = new MySqlCommand(query, connection);
             command.Parameters.AddWithValue("@Id", id);
@@ -135,7 +147,11 @@ namespace inmobiliaria.Models
                         Coordenadas = reader.IsDBNull(reader.GetOrdinal("ImmCoordenadas")) ? null : reader.GetString("ImmCoordenadas"),
                         ImagenPortada = reader.IsDBNull(reader.GetOrdinal("ImmImagenPortada")) ? null : reader.GetString("ImmImagenPortada"),
                         FechaAlta = reader.GetDateTime("ImmFechaAlta")
-                    }
+                    },
+                    UsuarioCreadorNombre = reader.IsDBNull(reader.GetOrdinal("UsuarioCreadorNombre")) ? null : reader.GetString("UsuarioCreadorNombre"),
+                    UsuarioCreadorEmail = reader.IsDBNull(reader.GetOrdinal("UsuarioCreadorEmail")) ? null : reader.GetString("UsuarioCreadorEmail"),
+                    UsuarioTerminadorNombre = reader.IsDBNull(reader.GetOrdinal("UsuarioTerminadorNombre")) ? null : reader.GetString("UsuarioTerminadorNombre"),
+                    UsuarioTerminadorEmail = reader.IsDBNull(reader.GetOrdinal("UsuarioTerminadorEmail")) ? null : reader.GetString("UsuarioTerminadorEmail"),
                 };
             }
 

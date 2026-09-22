@@ -20,7 +20,8 @@
     <form asp-action="Index" method="get">
       <div class="input-group">
         <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-        <input type="text" name="searchString" value="@Model.Busqueda" class="form-control border-start-0" placeholder="Buscar por DNI, nombre o email..." />
+        <input type="text" name="searchString" value="@Model.Busqueda" class="form-control border-start-0"
+               placeholder="Buscar por DNI, nombre o email..." />
         <button type="submit" class="btn btn-outline-primary">Buscar</button>
         @if (!string.IsNullOrEmpty(Model.Busqueda))
         {
@@ -92,10 +93,12 @@
                   <button type="button" class="btn btn-sm btn-warning" title="Editar" onclick="loadEditModal(@item.Id)">
                     <i class="bi bi-pencil"></i>
                   </button>
-                  <button type="button" class="btn btn-sm btn-danger" title="Eliminar" data-bs-toggle="modal"
-                          data-bs-target="#deleteModal" data-id="@item.Id" data-nombre="@item.NombreCompleto">
-                    <i class="bi bi-trash"></i>
-                  </button>
+                  @if (User.IsInRole("Administrador")){   
+                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar" data-bs-toggle="modal"
+                            data-bs-target="#deleteModal" data-id="@item.Id" data-nombre="@item.NombreCompleto">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  }
                 </td>
               </tr>
             }

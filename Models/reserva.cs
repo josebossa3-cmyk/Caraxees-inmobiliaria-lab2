@@ -66,5 +66,14 @@ namespace inmobiliaria.Models
 
     [Display(Name = "Fecha de creacion")]
     public DateTime FechaCreacion { get; set; } = DateTime.Now;
+
+    [NotMapped]
+    public string? UsuarioCreadorNombre { get; set; }
+    [NotMapped]
+    public string? UsuarioCreadorEmail { get; set; }
+    [NotMapped]
+    public string? UsuarioTerminadorNombre { get; set; }
+    [NotMapped]
+    public string? UsuarioTerminadorEmail { get; set; }
   }
 }
