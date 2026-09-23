@@ -1,0 +1,86 @@
+@model IEnumerable<inmobiliaria.Models.Inmueble>
+
+@{
+  ViewData["Title"] = "Inmuebles por propietario";
+  var propietarios = ViewBag.Propietarios as List<inmobiliaria.Models.Propietario> ?? new();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="mb-1 mt-3">
+      <i class="bi bi-person-badge text-primary"></i> Inmuebles por propietario
+    </h1>
+    <p class="text-muted mb-0">Seleccioná un propietario para ver sus inmuebles.</p>
+  </div>
+  <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left"></i> Volver
+  </a>
+</div>
+
+<form method="get" class="card card-body shadow-sm mb-4">
+  <div class="row align-items-end">
+    <div class="col-md-6">
+      <label class="form-label fw-semibold">Propietario</label>
+      <select name="propietarioId" class="form-select select2" onchange="this.form.submit()">
+        <option value="">-- Seleccione un propietario --</option>
+        @foreach (var p in propietarios)
+        {
+          <option value="@p.Id" selected="@(ViewBag.PropietarioId == p.Id)">@p.NombreCompleto</option>
+        }
+      </select>
+    </div>
+  </div>
+</form>
+
+@if (ViewBag.PropietarioId != null)
+{
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Dirección</th>
+            <th>Tipo</th>
+            <th>Precio/día</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!Model.Any())
+          {
+            <tr>
+              <td colspan="4" class="text-center text-muted py-4">Este propietario no tiene inmuebles.</td>
+            </tr>
+          }
+          else
+          {
+            @foreach (var i in Model)
+            {
+              <tr>
+                <td class="fw-semibold">@i.Direccion</td>
+                <td>@i.TipoInmueble?.Nombre</td>
+                <td>@i.PrecioPorDia.ToString("C")</td>
+                <td>
+                  <span class="badge @(i.Estado ? "bg-success" : "bg-secondary")">
+                    @(i.Estado ? "Disponible" : "Suspendido")
+                  </span>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer bg-white">
+      <small class="text-muted">Total: @Model.Count() inmuebles</small>
+    </div>
+  </div>
+}
+
+@section Scripts {
+  <script>
+    $(document).ready(function () {
+      $('.select2').select2({ theme: 'bootstrap-5', language: 'es', width: '100%' });
+    });
+  </script>
+}

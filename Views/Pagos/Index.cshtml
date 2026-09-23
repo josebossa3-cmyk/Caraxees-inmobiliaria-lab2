@@ -40,20 +40,24 @@
     </div>
     <div class="card-body">
         <form asp-action="Index" method="get">
-            <div class="input-group">
-                <span class="input-group-text bg-white"><i class="bi bi-file-earmark-text"></i></span>
-                <select name="reservaId" class="form-select select2" onchange="this.form.submit()">
-                    <option value="">Todas las reservas</option>
-                    @foreach (var r in Model.Reservas)
-                    {
-                        <option value="@r.Id" selected="@(Model.ReservaId == r.Id)">
-                            Reserva #@r.Id - @r.Inquilino?.NombreCompleto - @r.Inmueble?.Direccion
-                        </option>
-                    }
-                </select>
-                <button type="submit" class="btn btn-primary text-nowrap">
-                    <i class="bi bi-search"></i> Filtrar
-                </button>
+            <div class="row g-2">
+                <div class="col">
+                    <select name="reservaId" class="form-select select2" onchange="this.form.submit()">
+                        <option value="">Todas las reservas</option>
+                        @foreach (var r in Model.Reservas)
+                        {
+                            <option value="@r.Id" selected="@(Model.ReservaId == r.Id)">
+                                Reserva #@r.Id - @r.Inquilino?.NombreCompleto - @r.Inmueble?.Direccion
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-auto">
+
+                    <button type="submit" class="btn btn-primary text-nowrap">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
             </div>
         </form>
     </div>
@@ -173,7 +177,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Concepto</label>
-                        <select name="concepto" id="concepto" class="form-select select2">
+                        <select name="concepto" id="concepto" class="form-select">
                             <option value="Seña">Seña (@Model.ReservaSeleccionada.PorcentajeReserva%)</option>
                             <option value="Pago parcial">Pago parcial</option>
                             <option value="Pago total">Pago total</option>
@@ -283,7 +287,7 @@
         }
 
         $(document).ready(function () {
-            $('.select2').select2({
+            $('select[name="reservaId"]').select2({
                 theme: 'bootstrap-5',
                 language: 'es',
                 width: '100%',

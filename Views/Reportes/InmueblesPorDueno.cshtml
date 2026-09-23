@@ -18,7 +18,7 @@
   <div class="row align-items-end">
     <div class="col-md-4">
       <label class="form-label fw-semibold">Disponibilidad</label>
-      <select name="disponible" class="form-select select2" onchange="this.form.submit()">
+      <select name="disponible" class="form-select" onchange="this.form.submit()">
         <option value="" selected="@(ViewBag.Disponible == null)">Todos</option>
         <option value="true" selected="@(ViewBag.Disponible == true)">Solo disponibles</option>
         <option value="false" selected="@(ViewBag.Disponible == false)">Solo suspendidos</option>
@@ -38,10 +38,10 @@
       <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
           <tr>
-            <th>Direccion</th>
+            <th>Dirección</th>
             <th>Propietario</th>
             <th>Tipo</th>
-            <th>Precio/dia</th>
+            <th>Precio/día</th>
             <th>Estado</th>
           </tr>
         </thead>
@@ -49,7 +49,7 @@
           @if (!Model.Any())
           {
             <tr>
-              <td class="text-center text-muted py-4">No hay inmuebles.</td>
+              <td colspan="5" class="text-center text-muted py-4">No hay inmuebles.</td>
             </tr>
           }
           else

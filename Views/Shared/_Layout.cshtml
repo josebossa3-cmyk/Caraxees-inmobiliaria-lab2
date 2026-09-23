@@ -87,18 +87,18 @@
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle @(currentController == "Reportes" ? "active" : "")" href="#" id="reportesDropdown" role="button" data-bs-toogle="dropdown">
+                            <a class="nav-link dropdown-toggle @(currentController == "Reportes" ? "active" : "")" href="#" id="reportesDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-graph-up me-1"></i> Reportes
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="drowdown-item" asp-controller="Reportes" asp-action="InmueblesPorDueno">Inmuebles y dueños</a></li>
-                                <li><a class="drowdown-item" asp-controller="Reportes" asp-action="InmueblesPorPropietario">Inmuebles por propietario</a></li>
-                                <li><a class="drowdown-item" asp-controller="Reportes" asp-action="InmueblesMasReservados">Más reservados (365 dias)</a></li>
-                                <li><a class="drowdown-item" asp-controller="Reportes" asp-action="InmueblesSinReservas">Sin reservas</a></li>
-                                <li><hr class="dropdow-divider"></li>
-                                <li><a class="drowdown-item" asp-controller="Reportes" asp-action="ReservasVigentes">Reservas vigentes</a></li>
-                                <li><a class="drowdown-item" asp-controller="Reportes" asp-action="ReservasPorVencer">Reservas vigentes</a></li>
-                                <li><a class="drowdown-item" asp-controller="Reportes" asp-action="InmueblesDisponibles">Disponibles por fechas</a></li>
+                                <li><a class="dropdown-item" asp-controller="Reportes" asp-action="InmueblesPorDueno">Inmuebles y dueños</a></li>
+                                <li><a class="dropdown-item" asp-controller="Reportes" asp-action="InmueblesPorPropietario">Inmuebles por propietario</a></li>
+                                <li><a class="dropdown-item" asp-controller="Reportes" asp-action="InmueblesMasReservados">Más reservados (365 dias)</a></li>
+                                <li><a class="dropdown-item" asp-controller="Reportes" asp-action="InmueblesSinReservas">Sin reservas</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Reportes" asp-action="ReservasVigentes">Reservas vigentes</a></li>
+                                <li><a class="dropdown-item" asp-controller="Reportes" asp-action="ReservasPorVencer">Reservas por vencer</a></li>
+                                <li><a class="dropdown-item" asp-controller="Reportes" asp-action="InmueblesDisponibles">Disponibles por fechas</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -114,7 +114,7 @@
                                         }
                                         else
                                         {
-                                            <img width="64" src="https://ui-avatars.com/api/?rounded=true&name=@userName" />
+                                            <img src="https://ui-avatars.com/api/?rounded=true&name=@userName" alt="Avatar" style="width: 32px; height: 32px; border-radius:50%;" />
                                         }
                                             <span>
                                                 @userName
